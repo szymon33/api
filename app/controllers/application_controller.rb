@@ -22,12 +22,11 @@ class ApplicationController < ActionController::Base
     end
 
     def authenticate_basic_auth
-	    authenticate_with_http_basic do |username, password|
-	      if User.authenticate(username, password)
+      authenticate_with_http_basic do |username, password|
+        if User.authenticate(username, password)
           session[:user_id] = User.find_by_username!(username).id
           true
         end
-	    end
-  
+      end
     end
 end

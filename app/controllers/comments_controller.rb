@@ -5,8 +5,8 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new(params[:comment])
     @comment.user = current_user
-    if @comment.save    	  
-  	  render json: @comment, status: 201, location: post_url(@post) # created    
+    if @comment.save        
+      render json: @comment, status: 201, location: post_url(@post) # created    
     else
       render json: @comment.errors, status: 422 # unprocessable_entity
     end
@@ -16,11 +16,11 @@ class CommentsController < ApplicationController
     render json: @comment, status: 200
   end
 
-  def update  	
+  def update    
     if @comment.update_attributes(params[:comment])
-  	  head :no_content
+      head :no_content
     else
-      render json: @comment.errors, status: 422 # unprocessable_entity 	
+      render json: @comment.errors, status: 422 # unprocessable_entity   
     end
   end
 

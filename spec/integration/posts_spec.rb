@@ -23,7 +23,7 @@ describe "Posts", type: 'feature' do
         post = json(response.body)
         response.location.should == post_url(post[:id])
       end
-  	end
+    end
 
     it "has user" do 
       @post = FactoryGirl.attributes_for(:post)
@@ -34,50 +34,50 @@ describe "Posts", type: 'feature' do
     end
       
 
-  	describe "with invalid params" do
-  	  it "does not create post with no content" do
-  	    post '/posts', {:post => {:content => nil}}.to_json,  
-  	      headers
+    describe "with invalid params" do
+      it "does not create post with no content" do
+        post '/posts', {:post => {:content => nil}}.to_json,  
+          headers
 
-  	    response.status.should == 422 # unprocessable_entity
+        response.status.should == 422 # unprocessable_entity
         response.content_type.should == Mime::JSON   
-  	  end
-  	end
+      end
+    end
   end
 
   describe "PUT update" do
     
-  	describe "with valid params" do
-  	  it "updates the requested post" do
-  	  	@post = FactoryGirl.create(:post)
-  	    put "/posts/#{@post.id}",
+    describe "with valid params" do
+      it "updates the requested post" do
+        @post = FactoryGirl.create(:post)
+        put "/posts/#{@post.id}",
           { post: { content: 'edited content' } }.to_json,
-  	      headers
+          headers
 
         response.status.should eq(204) # no_content
         @post.reload.content.should == "edited content"   
       end
-  	end
+    end
 
-  	describe "with invalid params" do
-  	  it "unsuccessfull update with no content" do
-  	  	@post = FactoryGirl.create(:post)
-  	  	put "/posts/#{@post.id}", 
-  	  	  { post: { content: nil } }.to_json,
-  	  	  headers
+    describe "with invalid params" do
+      it "unsuccessfull update with no content" do
+        @post = FactoryGirl.create(:post)
+        put "/posts/#{@post.id}", 
+          { post: { content: nil } }.to_json,
+          headers
 
-  	  	response.status.should eq(422) 
-  	  end
-  	end
+        response.status.should eq(422) 
+      end
+    end
   end
 
   describe "DELETE destroy" do
-  	it "destroys the requested post" do
-  	  @post = FactoryGirl.create(:post)	
+    it "destroys the requested post" do
+      @post = FactoryGirl.create(:post)  
  
-  	  delete "/posts/#{@post.id}", {}, headers
-  	  response.status.should eq(204) #no content
-  	end
+      delete "/posts/#{@post.id}", {}, headers
+      response.status.should eq(204) #no content
+    end
   end
 
  

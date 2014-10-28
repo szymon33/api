@@ -7,8 +7,8 @@ describe User do
   it { have_many :posts }
 
   it "should be valid" do
-  	@user = FactoryGirl.create(:user)
-  	@user.should be_valid
+    @user = FactoryGirl.create(:user)
+    @user.should be_valid
   end
-	
+  
 end

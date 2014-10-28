@@ -8,7 +8,7 @@ class Post < ActiveRecord::Base
 
   def like
     self.like_counter += 1
-  	save
+    save
   end
 
   private
