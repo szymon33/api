@@ -23,14 +23,13 @@ end
 
 gem 'jquery-rails'
 
-
 group :test do
   gem 'factory_girl_rails', '~> 4.2.1'
   gem 'rspec-rails', '~> 2.0'
   gem 'shoulda-matchers', require: false
   gem 'foobar'  
   gem 'database_cleaner'
-  gem "codeclimate-test-reporter", group: :test, require: nil  
+  gem "codeclimate-test-reporter", require: nil  
 end
 
 group :development do
@@ -38,4 +37,3 @@ group :development do
   gem 'pry'
   gem 'quiet_assets'
 end
-

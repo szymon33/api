@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe "Posts", type: 'feature' do
-  before(:each) { @user = FactoryGirl.create(:user) }
+  before(:each) { 
+    @user = FactoryGirl.create(:user)
+  }
   let(:headers) { { 'ACCEPT' => Mime::JSON, 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => encode_credentials(@user.username, @user.password) } }
 
   it "GET index returns posts in JSON" do
-    get '/posts', headers
+    get '/posts', { format: :json }, headers
     response.status.should eq(200)
     response.content_type.should == Mime::JSON
   end

@@ -59,4 +59,5 @@ module Api
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
   end
+  I18n.enforce_available_locales = false    
 end

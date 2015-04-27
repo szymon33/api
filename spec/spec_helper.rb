@@ -1,8 +1,10 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
+
+CODECLIMATE_REPO_TOKEN='2f13884e47617e1f4da147ce674221d0eb9d39a0a98fa7da4d13545542e75598'
 require "codeclimate-test-reporter"
 CodeClimate::TestReporter.start
-CODECLIMATE_REPO_TOKEN='2f13884e47617e1f4da147ce674221d0eb9d39a0a98fa7da4d13545542e75598'
+
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'shoulda/matchers'
