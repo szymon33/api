@@ -30,6 +30,7 @@ group :test do
   gem 'shoulda-matchers', require: false
   gem 'foobar'  
   gem 'database_cleaner'
+  gem "codeclimate-test-reporter", group: :test, require: nil  
 end
 
 group :development do
