@@ -14,6 +14,8 @@ API description
 ### 4. Basic auth
 ### 5. One method 'status' with no authentication
 ### 6. All covered by specs
+### 7. API is in subdomain so don't forget to add api.example.com to /etc/hosts when testing.
+
 
 Request: 'GET /status'
 
