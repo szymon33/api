@@ -66,7 +66,6 @@ describe 'Posts' do
         api_put "/posts/#{@post.id}",
                 { post: { content: nil } }.to_json,
                 headers
-
         response.status.should eq(422)
       end
     end
@@ -75,7 +74,6 @@ describe 'Posts' do
   describe 'DELETE destroy' do
     it 'destroys the requested post' do
       @post = FactoryGirl.create(:post)
-
       api_delete "/posts/#{@post.id}", {}, headers
       response.status.should eq(204) # no content
     end
@@ -83,18 +81,29 @@ describe 'Posts' do
 
   describe 'LIKE action' do
     before(:each) { @post = FactoryGirl.create(:post) }
+    let(:like) { api_put "/posts/#{@post.id}/like", nil, headers }
 
-    it 'be JSON request and response' do
-      api_put "/posts/#{@post.id}/like", nil, headers
-      response.status.should eq(204) # no_content
+    describe 'when valid' do
+      it 'has resonse status with no content' do
+        like
+        response.status.should eq(204) # no_content
+      end
+
+      it 'should increase like counter' do
+        expect {
+          like
+        }.to change{
+          @post.reload.like_counter
+        }.by(1)
+      end
     end
 
-    it 'should increase like counter' do
-      expect {
-        api_put "/posts/#{@post.id}/like", nil, headers
-      }.to change{
-        @post.reload.like_counter
-      }.by(1)
+    describe 'when invalid' do
+      before(:each) { allow_any_instance_of(Post).to receive(:save).and_return(false) }
+      it 'has unsuccessful update' do
+        like
+        expect(response.status).to eql 422 # unprocessable_entity        
+      end
     end
   end
 end

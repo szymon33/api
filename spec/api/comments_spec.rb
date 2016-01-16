@@ -20,7 +20,7 @@ describe 'Comments' do
 
     describe 'with valid params' do
       it 'creates new comment' do
-        @post.id.should_not be_nil
+        expect(@post.id).to_not be nil
         api_post "/posts/#{@post.id}/comments",
                  @comment.to_json,
                  headers
@@ -33,7 +33,7 @@ describe 'Comments' do
     it 'has user' do
       api_post "/posts/#{@post.id}/comments", @comment.to_json, headers
       expect(response.status).to eql 201
-      Comment.last.user.username.should eq('pokemon')
+      expect(Comment.last.user.username).to eq('pokemon')
     end
 
     describe 'with invalid params' do
@@ -43,8 +43,19 @@ describe 'Comments' do
                  @comment.to_json,
                  headers
         expect(response.status).to eql 422 # unprocessable_entity
-        response.content_type.should == Mime::JSON
+        expect(response.content_type).to eql Mime::JSON
       end
+    end
+  end
+
+  describe 'GET show' do
+    it 'gets single comment' do
+      @comment = FactoryGirl.create(:comment)
+      api_get "/posts/#{@comment.post.id}/comments/#{@comment.id}",
+               @comment.to_json,
+               headers
+      expect(response.status).to eql 200
+      expect(response.content_type).to eql Mime::JSON
     end
   end
 
@@ -55,8 +66,8 @@ describe 'Comments' do
         api_put "/posts/#{@comment.post_id}/comments/#{@comment.id}",
                 { comment: { content: 'edited content' } }.to_json,
                 headers
-        response.status.should eq(204) # no_content
-        @comment.reload.content.should == 'edited content'
+        expect(response.status).to eql(204) # no_content
+        expect(@comment.reload.content).to eql 'edited content'
       end
     end
 
@@ -67,7 +78,7 @@ describe 'Comments' do
                 { comment: { content: nil } }.to_json,
                 headers
 
-        response.status.should eq(422)
+        expect(response.status).to eql(422)
       end
     end
   end
@@ -77,24 +88,35 @@ describe 'Comments' do
       @comment = FactoryGirl.create(:comment)
 
       api_delete "/posts/#{@comment.post_id}/comments/#{@comment.id}", {}, headers
-      response.status.should eq(204) # no content
+      expect(response.status).to eql(204) # no content
     end
   end
 
   describe 'LIKE action' do
     before(:each) { @comment = FactoryGirl.create(:comment) }
+    let(:like) { api_put "/posts/#{@comment.post_id}/comments/#{@comment.id}/like", nil, headers }
 
-    it 'be JSON request and response' do
-      api_put "/posts/#{@comment.post_id}/comments/#{@comment.id}/like", nil, headers
-      response.status.should eq(204) # no_content
+    describe 'when valid' do
+      it 'has resonse status with no content' do
+        like
+        expect(response.status).to eql(204) # no_content
+      end
+
+      it 'increases like counter' do
+        expect {
+          like
+        }.to change{
+          @comment.reload.like_counter
+        }.by(1)
+      end
     end
 
-    it 'should increase like counter' do
-      expect {
-        api_put "/posts/#{@comment.post_id}/comments/#{@comment.id}/like", nil, headers
-      }.to change{
-        @comment.reload.like_counter
-      }.by(1)
-    end
+    describe 'when invalid' do
+      before(:each) { allow_any_instance_of(Comment).to receive(:save).and_return(false) }
+      it 'has unsuccessful update' do
+        like
+        expect(response.status).to eql 422 # unprocessable_entity        
+      end
+    end    
   end
 end
