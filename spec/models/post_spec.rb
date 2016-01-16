@@ -9,16 +9,16 @@ describe Post do
   describe 'when create' do
     before(:each) { @post = FactoryGirl.create(:post) }
 
-    it 'should be valid' do
-      @post.should be_valid
+    it 'is valid' do
+      expect(@post).to be_valid
     end
 
-    it 'should have like counter eql 0' do
-      @post.like_counter.should be 0
+    it 'has like counter eql 0 by default' do
+      expect(@post.like_counter).to be_zero
     end
   end
 
-  it 'should increase like counter' do
+  it 'can increase like counter' do
     post = FactoryGirl.create(:post)
     expect {
       post.like

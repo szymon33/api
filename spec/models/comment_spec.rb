@@ -8,16 +8,16 @@ describe Comment do
   describe 'when create' do
     before(:each) { @comment = FactoryGirl.create(:comment) }
 
-    it 'should be valid' do
-      @comment.should be_valid
+    it 'is valid' do
+      expect(@comment).to be_valid
     end
 
-    it 'should have like counter eql 0' do
-      @comment.like_counter.should be 0
+    it 'has like counter eql 0 by defaut' do
+      expect(@comment.like_counter).to be_zero
     end
   end
 
-  it 'should increase like counter' do
+  it 'can increase like counter' do
     comment = FactoryGirl.create(:comment)
     expect {
       comment.like

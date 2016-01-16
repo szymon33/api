@@ -20,3 +20,6 @@ API description
 Request: 'GET /status'
 
 Returns simple 200 '{message: 200}'
+
+
+# napisać: ze zostawilem gdzie niegdzie wiecej specsow zeby pokazac jak to robie

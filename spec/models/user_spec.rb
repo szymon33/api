@@ -8,6 +8,6 @@ describe User do
 
   it 'is valid' do
     @user = FactoryGirl.create(:user)
-    @user.should be_valid
+    expect(@user).to be_valid
   end
 end

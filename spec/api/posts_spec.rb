@@ -26,7 +26,7 @@ describe 'Posts' do
         expect(response.status).to eql 201
         expect(response.content_type).to eql Mime::JSON
 
-        response.location.should == "http://api.example.com/posts/#{Post.last.id}"
+        expect(response.location).to eql "http://api.example.com/posts/#{Post.last.id}"
       end
     end
 
@@ -35,7 +35,7 @@ describe 'Posts' do
 
       api_post '/posts', @post.to_json, headers
       expect(response.status).to eql 201
-      Post.last.user.username.should eq('pokemon')
+      expect(Post.last.user.username).to eql('pokemon')
     end
 
     describe 'with invalid params' do
@@ -55,8 +55,8 @@ describe 'Posts' do
         api_put "/posts/#{@post.id}",
                 { post: { content: 'edited content' } }.to_json,
                 headers
-        response.status.should eq(204) # no_content
-        @post.reload.content.should == 'edited content'
+        expect(response.status).to eql(204) # no_content
+        expect(@post.reload.content).to eql 'edited content'
       end
     end
 
@@ -66,7 +66,7 @@ describe 'Posts' do
         api_put "/posts/#{@post.id}",
                 { post: { content: nil } }.to_json,
                 headers
-        response.status.should eq(422)
+        expect(response.status).to eql(422)
       end
     end
   end
@@ -75,7 +75,7 @@ describe 'Posts' do
     it 'destroys the requested post' do
       @post = FactoryGirl.create(:post)
       api_delete "/posts/#{@post.id}", {}, headers
-      response.status.should eq(204) # no content
+      expect(response.status).to eql(204) # no content
     end
   end
 
@@ -86,10 +86,10 @@ describe 'Posts' do
     describe 'when valid' do
       it 'has resonse status with no content' do
         like
-        response.status.should eq(204) # no_content
+        expect(response.status).to eql(204) # no_content
       end
 
-      it 'should increase like counter' do
+      it 'increases like counter' do
         expect {
           like
         }.to change{
