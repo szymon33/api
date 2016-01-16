@@ -6,7 +6,7 @@ module API
     def create
       @comment = Comment.new(params[:comment], post: @post)
       @comment.user = current_user
-      if @comment.save        
+      if @comment.save
         render json: @comment, status: 201, location: [:api, @post] # created
       else
         render json: @comment.errors, status: 422 # unprocessable_entity
@@ -17,11 +17,11 @@ module API
       render json: @comment, status: 200
     end
 
-    def update    
+    def update
       if @comment.update_attributes(params[:comment])
         head :no_content
       else
-        render json: @comment.errors, status: 422 # unprocessable_entity   
+        render json: @comment.errors, status: 422 # unprocessable_entity
       end
     end
 
@@ -34,17 +34,18 @@ module API
       if @comment.like
         head :no_content
       else
-        render json: @comment.errors, status: 422 # unprocessable_entity   
+        render json: @comment.errors, status: 422 # unprocessable_entity
       end
     end
 
     private
-      def get_post() 
-        @post = Post.find( params[:post_id] )
-      end
-      
-      def get_comment() 
-        @comment = Comment.find( params[:id] )
-      end
+
+    def get_post
+      @post = Post.find(params[:post_id])
+    end
+
+    def get_comment
+      @comment = Comment.find(params[:id])
+    end
   end
 end

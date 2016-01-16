@@ -1,11 +1,13 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
+ENV['RAILS_ENV'] ||= 'test'
+require 'simplecov'
+SimpleCov.start 'rails'
 
-CODECLIMATE_REPO_TOKEN='2f13884e47617e1f4da147ce674221d0eb9d39a0a98fa7da4d13545542e75598'
-require "codeclimate-test-reporter"
-CodeClimate::TestReporter.start
+# CODECLIMATE_REPO_TOKEN='2f13884e47617e1f4da147ce674221d0eb9d39a0a98fa7da4d13545542e75598'
+# require 'codeclimate-test-reporter'
+# CodeClimate::TestReporter.start
 
-require File.expand_path("../../config/environment", __FILE__)
+require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'shoulda/matchers'
 require 'database_cleaner'
@@ -16,7 +18,7 @@ require 'database_cleaner'
 # run twice. It is recommended that you do not name files matching this glob to
 # end with _spec.rb. You can configure this pattern with with the --pattern
 # option on the command line or in ~/.rspec, .rspec or `.rspec-local`.
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 RSpec.configure do |config|
   # ## Mock Framework
@@ -44,7 +46,7 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = "random"
+  config.order = 'random'
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
@@ -60,7 +62,7 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/v/3-0/docs
   config.infer_spec_type_from_file_location!
-  config.include Rails.application.routes.url_helpers  
+  config.include Rails.application.routes.url_helpers
 
   # MY database cleaner
   config.before(:suite) do
@@ -72,5 +74,5 @@ RSpec.configure do |config|
     DatabaseCleaner.cleaning do
       example.run
     end
-  end  
+  end
 end

@@ -14,7 +14,8 @@ class Comment < ActiveRecord::Base
   end
 
   private
-    def set_defaults
-      self.like_counter = 0
-    end
+
+  def set_defaults
+    self.like_counter = 0
+  end
 end

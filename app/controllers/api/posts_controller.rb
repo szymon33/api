@@ -10,20 +10,20 @@ module API
     def create
       post = Post.new(params[:post])
       post.user = current_user
-      if post.save        
+      if post.save
         render json: post, status: :created, location: [:api, post] # created - 201
-        #render nothing: true, status: 204, location: post # no_content
+        # render nothing: true, status: 204, location: post # no_content
       else
         render json: post.errors, status: 422 # unprocessable_entity
       end
     end
 
-    def update    
+    def update
       post = Post.find(params[:id])
       if post.update_attributes(params[:post])
         head :no_content
       else
-        render json: post.errors, status: 422 # unprocessable_entity   
+        render json: post.errors, status: 422 # unprocessable_entity
       end
     end
 
@@ -34,11 +34,11 @@ module API
     end
 
     def like
-      post = Post.find(params[:id])  
+      post = Post.find(params[:id])
       if post.like
         head :no_content
       else
-        render json: post.errors, status: 422 # unprocessable_entity   
+        render json: post.errors, status: 422 # unprocessable_entity
       end
     end
   end

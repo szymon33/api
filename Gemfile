@@ -27,13 +27,14 @@ group :test do
   gem 'factory_girl_rails', '~> 4.2.1'
   gem 'rspec-rails', '~> 2.0'
   gem 'shoulda-matchers', require: false
-  gem 'foobar'  
+  gem 'foobar'
   gem 'database_cleaner'
-  gem "codeclimate-test-reporter", require: nil  
+  gem 'codeclimate-test-reporter', require: nil
+  gem 'simplecov', require: false
 end
 
 group :development do
-  gem 'thin' # jeśli nie webrick
+  gem 'thin' # if not werbrick
   gem 'pry'
   gem 'quiet_assets'
 end
