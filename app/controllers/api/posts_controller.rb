@@ -1,5 +1,7 @@
 module API
   class PostsController < ApplicationController
+    before_filter :set_post, only: [:update, :destroy, :like]
+
     def index
       posts = Post.all
       respond_to do |format|
@@ -8,6 +10,7 @@ module API
     end
 
     def create
+      return head 403 if current_user.guest? # forbidden
       post = Post.new(params[:post])
       post.creator = current_user
       if post.save
@@ -19,27 +22,37 @@ module API
     end
 
     def update
-      post = Post.find(params[:id])
-      if post.update_attributes(params[:post])
+      return head 403 if not_permitted_user
+      if @post.update_attributes(params[:post])
         head :no_content
       else
-        render json: post.errors, status: 422 # unprocessable_entity
+        render json: @post.errors, status: 422 # unprocessable_entity
       end
     end
 
     def destroy
-      post = Post.find(params[:id])
-      post.destroy
+      return head 403 if not_permitted_user
+      @post.destroy
       head 204
     end
 
     def like
-      post = Post.find(params[:id])
-      if post.like
+      return head 403 if current_user.guest? # forbidden
+      if @post.like
         head :no_content
       else
-        render json: post.errors, status: 422 # unprocessable_entity
+        render json: @post.errors, status: 422 # unprocessable_entity
       end
+    end
+
+    private
+
+    def set_post
+      @post = Post.find(params[:id])
+    end
+
+    def not_permitted_user
+      !((current_user.user? && @post.creator == current_user) || current_user.admin?)
     end
   end
 end

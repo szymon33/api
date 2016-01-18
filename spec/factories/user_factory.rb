@@ -1,18 +1,19 @@
 FactoryGirl.define do
   factory(:user) do
-    username 'pokemon'
+    sequence :username do |n|
+      "pokemon#{n}"
+    end
     password 'test'
     role 'user'
 
     factory(:admin) do
       username 'adminuser'
-      password '12345'
       role 'admin'
     end
 
     factory :guest do
       username 'guestuser'
-      password 'guest'
+      role 'guest'
     end
   end
 end

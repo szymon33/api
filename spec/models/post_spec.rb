@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Post do
   it { validate_presence_of :content }
   it { validate_presence_of :title }
-  it { belong_to :user }
+  it { validate_presence_of :creator }
+  it { belong_to(:creator).with_foreign_key('user_id') }
   it { have_many :comments }
 
   describe 'when create' do
