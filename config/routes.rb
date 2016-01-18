@@ -13,7 +13,6 @@ Api::Application.routes.draw do
       end
     end
 
-    resources :users, except: [:new, :edit]
     root to: 'heartbeat#status'
   end
 end

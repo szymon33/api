@@ -1,6 +1,6 @@
 module API
   class PostsController < ApplicationController
-    before_filter :set_post, only: [:update, :destroy, :like]
+    before_filter :set_post, except: [:index, :create]
 
     def index
       posts = Post.all
@@ -19,6 +19,10 @@ module API
       else
         render json: post.errors, status: 422 # unprocessable_entity
       end
+    end
+
+    def show
+      render json: @comment, status: 200
     end
 
     def update

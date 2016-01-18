@@ -63,6 +63,16 @@ describe 'Posts' do
     end
   end
 
+  describe 'GET show' do
+    it 'gets single post' do
+      api_get "/posts/#{basic_post.id}",
+              basic_post.to_json,
+              headers
+      expect(response.status).to eql 200
+      expect(response.content_type).to eql Mime::JSON
+    end
+  end
+
   describe 'PUT update' do
     let(:put_action) do
       api_put "/posts/#{basic_post.id}",
