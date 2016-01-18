@@ -8,7 +8,7 @@ class Comment < ActiveRecord::Base
 
   before_create :set_defaults
 
-  validates_presence_of :content
+  validates_presence_of :creator, :content
 
   private
 

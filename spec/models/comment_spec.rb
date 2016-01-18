@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Comment do
   it { validate_presence_of :content }
-  it { belong_to :user }
+  it { validate_presence_of :creator }
+  it { belong_to(:user).with_foreign_key('user_id') }
   it { belong_to :post }
 
   let(:comment) { FactoryGirl.create(:comment) }
@@ -20,6 +21,8 @@ describe Comment do
   it 'can increase like counter' do
     expect {
       comment.like
-    }.to change { comment.like_counter }.by(1)
+    }.to change {
+      comment.like_counter
+    }.by(1)
   end
 end

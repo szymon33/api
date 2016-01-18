@@ -14,7 +14,7 @@ describe Post do
       expect(@post).to be_valid
     end
 
-    it 'has like counter eql 0 by default' do
+    it 'has like counter eql 0' do
       expect(@post.like_counter).to be_zero
     end
   end

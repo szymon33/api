@@ -20,30 +20,32 @@ describe 'Posts' do
   end
 
   describe 'POST creates my post' do
+    let(:post_attr) { FactoryGirl.attributes_for(:post) }
+
     describe 'with valid params' do
       it 'creates my new post' do
         api_post '/posts',
-                 FactoryGirl.attributes_for(:post).to_json,
+                 post_attr.to_json,
                  headers
         expect(response.status).to eql 201
         expect(response.content_type).to eql Mime::JSON
-
         expect(response.location).to eql "http://api.example.com/posts/#{Post.last.id}"
       end
-    end
 
-    it 'has creator' do
-      @user = FactoryGirl.create(:user, username: 'Clu')
-      post = FactoryGirl.attributes_for(:post)
-      api_post '/posts', post.to_json, headers
-      expect(response.status).to eql 201
-      expect(Post.last.creator).to_not be nil
-      expect(Post.last.creator).to eql @user
+      it 'has creator' do
+        @user = FactoryGirl.create(:user, username: 'Clu')
+
+        api_post '/posts', post_attr.to_json, headers
+        expect(response.status).to eql 201
+        expect(Post.last.creator).to_not be nil
+        expect(Post.last.creator).to eql @user
+      end
     end
 
     describe 'with invalid params' do
       it 'does not create post with no content' do
-        api_post '/posts', { post: { content: nil } }.to_json,
+        post_attr['content'] = nil
+        api_post '/posts', post_attr.to_json,
                  headers
         expect(response.status).to eql 422 # unprocessable_entity
         expect(response.content_type).to eql Mime::JSON
@@ -54,7 +56,7 @@ describe 'Posts' do
       it 'is not allowed for guest' do
         @user = FactoryGirl.create(:guest)
         api_post '/posts',
-                 FactoryGirl.attributes_for(:post).to_json,
+                 post_attr.to_json,
                  headers
         expect(response.status).to eql 403 # forbidden
       end
@@ -125,9 +127,7 @@ describe 'Posts' do
       it 'is not allowed for guest' do
         guest = FactoryGirl.create(:guest)
         post = FactoryGirl.create(:post, creator: guest)
-        api_delete "/posts/#{post.id}",
-                   { post: { content: 'edited content' } }.to_json,
-                   headers
+        api_delete "/posts/#{post.id}", {}, headers
         expect(response.status).to eql(403) # forbidden
       end
 
