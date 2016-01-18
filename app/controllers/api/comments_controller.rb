@@ -2,6 +2,8 @@ module API
   class CommentsController < ApplicationController
     before_filter :set_post, only: :create
     before_filter :set_comment, except: :create
+    before_filter :user_not_allowed, only: [:update, :destroy]
+    before_filter :guest_not_allowed, except: [:show]
 
     def create
       return head :forbidden if current_user.guest?
@@ -19,7 +21,6 @@ module API
     end
 
     def update
-      return head :forbidden unless permitted_user?
       if @comment.update_attributes(params[:comment])
         head :no_content
       else
@@ -28,7 +29,6 @@ module API
     end
 
     def destroy
-      return head :forbidden unless permitted_user?
       @comment.destroy
       head 204
     end
@@ -52,8 +52,10 @@ module API
       @comment = Comment.find(params[:id])
     end
 
-    def permitted_user?
-      (current_user.user? && @comment.creator == current_user) || current_user.admin?
+    def user_not_allowed
+      unless (current_user.user? && @comment.creator == current_user) || current_user.admin?
+        head 403 # forbidden
+      end
     end
   end
 end

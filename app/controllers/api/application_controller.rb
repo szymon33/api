@@ -31,5 +31,9 @@ module API
         end
       end
     end
+
+    def guest_not_allowed
+      head 403 if current_user.guest? # forbidden
+    end
   end
 end

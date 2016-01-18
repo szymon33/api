@@ -1,6 +1,8 @@
 module API
   class PostsController < ApplicationController
     before_filter :set_post, except: [:index, :create]
+    before_filter :user_not_allowed, only: [:update, :destroy]
+    before_filter :guest_not_allowed, except: [:index, :show]
 
     def index
       posts = Post.all
@@ -10,7 +12,6 @@ module API
     end
 
     def create
-      return head 403 if current_user.guest? # forbidden
       post = Post.new(params[:post])
       post.creator = current_user
       if post.save
@@ -26,7 +27,6 @@ module API
     end
 
     def update
-      return head 403 if not_permitted_user
       if @post.update_attributes(params[:post])
         head :no_content
       else
@@ -35,13 +35,11 @@ module API
     end
 
     def destroy
-      return head 403 if not_permitted_user
       @post.destroy
       head 204
     end
 
     def like
-      return head 403 if current_user.guest? # forbidden
       if @post.like
         head :no_content
       else
@@ -55,8 +53,10 @@ module API
       @post = Post.find(params[:id])
     end
 
-    def not_permitted_user
-      !((current_user.user? && @post.creator == current_user) || current_user.admin?)
+    def user_not_allowed
+      unless (current_user.user? && @post.creator == current_user) || current_user.admin?
+        head 403 # forbidden
+      end
     end
   end
 end
