@@ -1,4 +1,7 @@
 class Comment < ActiveRecord::Base
+
+  include Like
+
   attr_accessible :content, :like_counter, :user
 
   belongs_to :user
