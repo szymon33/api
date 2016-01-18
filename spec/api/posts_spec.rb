@@ -103,7 +103,7 @@ describe 'Posts' do
       before(:each) { allow_any_instance_of(Post).to receive(:save).and_return(false) }
       it 'has unsuccessful update' do
         like
-        expect(response.status).to eql 422 # unprocessable_entity        
+        expect(response.status).to eql 422 # unprocessable_entity
       end
     end
   end

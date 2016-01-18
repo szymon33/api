@@ -57,8 +57,8 @@ describe 'Comments' do
     it 'gets single comment' do
       @comment = FactoryGirl.create(:comment)
       api_get "/posts/#{@comment.post.id}/comments/#{@comment.id}",
-               @comment.to_json,
-               headers
+              @comment.to_json,
+              headers
       expect(response.status).to eql 200
       expect(response.content_type).to eql Mime::JSON
     end
@@ -120,8 +120,8 @@ describe 'Comments' do
       before(:each) { allow_any_instance_of(Comment).to receive(:save).and_return(false) }
       it 'has unsuccessful update' do
         like
-        expect(response.status).to eql 422 # unprocessable_entity        
+        expect(response.status).to eql 422 # unprocessable_entity
       end
-    end    
+    end
   end
 end
