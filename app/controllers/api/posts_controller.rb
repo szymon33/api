@@ -9,7 +9,7 @@ module API
 
     def create
       post = Post.new(params[:post])
-      post.user = current_user
+      post.creator = current_user
       if post.save
         render json: post, status: :created, location: [:api, post] # created - 201
         # render nothing: true, status: 204, location: post # no_content

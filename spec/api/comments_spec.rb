@@ -30,10 +30,15 @@ describe 'Comments' do
       end
     end
 
-    it 'has user' do
-      api_post "/posts/#{@post.id}/comments", @comment.to_json, headers
+    it 'has creator' do
+      @user = FactoryGirl.create(:user, username: 'Clu')
+      @comment = FactoryGirl.attributes_for(:comment, post: @post)
+      api_post "/posts/#{@post.id}/comments",
+               @comment.to_json,
+               headers
       expect(response.status).to eql 201
-      expect(Comment.last.user.username).to eq('pokemon')
+      expect(Comment.last.creator).to_not be nil
+      expect(Comment.last.creator).to eql @user
     end
 
     describe 'with invalid params' do

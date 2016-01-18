@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory(:comment) do
-    content 'Allahu Akbar'
+    content 'Foo Bar'
     association :post
   end
 end

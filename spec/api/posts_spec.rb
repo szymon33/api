@@ -30,12 +30,13 @@ describe 'Posts' do
       end
     end
 
-    it 'has user' do
-      @post = FactoryGirl.attributes_for(:post)
-
-      api_post '/posts', @post.to_json, headers
+    it 'has creator' do
+      @user = FactoryGirl.create(:user, username: 'Clu')
+      post = FactoryGirl.attributes_for(:post)
+      api_post '/posts', post.to_json, headers
       expect(response.status).to eql 201
-      expect(Post.last.user.username).to eql('pokemon')
+      expect(Post.last.creator).to_not be nil
+      expect(Post.last.creator).to eql @user
     end
 
     describe 'with invalid params' do

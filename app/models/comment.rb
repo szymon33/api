@@ -4,7 +4,7 @@ class Comment < ActiveRecord::Base
 
   attr_accessible :content, :like_counter, :user
 
-  belongs_to :user
+  belongs_to :creator, class_name: "User", foreign_key: :user_id
   belongs_to :post
 
   before_create :set_defaults

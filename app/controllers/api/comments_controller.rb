@@ -5,7 +5,7 @@ module API
 
     def create
       @comment = Comment.new(params[:comment], post: @post)
-      @comment.user = current_user
+      @comment.creator = current_user
       if @comment.save
         render json: @comment, status: 201, location: [:api, @post] # created
       else
