@@ -6,7 +6,8 @@ class User < ActiveRecord::Base
   has_many :comments
   has_many :posts
 
-  validates_presence_of :username, :password
+  validate :username, prsence: true, uniqueness: true
+  validates_presence_of :password
   validates_inclusion_of :role, in: ROLES
 
   ROLES.each do |r|

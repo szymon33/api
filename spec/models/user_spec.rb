@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe User do
   it { validate_presence_of :username }
+  it { validate_uniqueness_of :username }
   it { validate_presence_of :password }
   it { validate_inclusion_of(:role).in_array(described_class::ROLES) }
   it { have_many :comments }

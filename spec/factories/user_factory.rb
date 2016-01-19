@@ -7,12 +7,10 @@ FactoryGirl.define do
     role 'user'
 
     factory(:admin) do
-      username 'adminuser'
       role 'admin'
     end
 
-    factory :guest do
-      username 'guestuser'
+    factory(:guest) do
       role 'guest'
     end
   end
