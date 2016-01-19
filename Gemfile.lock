@@ -67,7 +67,7 @@ GEM
     method_source (0.8.2)
     mime-types (1.25.1)
     multi_json (1.11.2)
-    mysql2 (0.3.20)
+    pg (0.14.1)
     polyglot (0.3.5)
     pry (0.10.3)
       coderay (~> 1.1.0)
@@ -162,7 +162,7 @@ DEPENDENCIES
   factory_girl_rails (~> 4.2.1)
   foobar
   jquery-rails
-  mysql2 (~> 0.3.20)
+  pg (~> 0.14.1)
   pry
   quiet_assets
   rails (= 3.2.22)
