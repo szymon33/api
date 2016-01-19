@@ -1,7 +1,7 @@
 class Post < ActiveRecord::Base
   include Like
 
-  attr_accessible :content, :title, :like_counter, :creator
+  attr_accessible :content, :title, :like_counter
 
   has_many :comments, dependent: :destroy
   belongs_to :creator, class_name: 'User', foreign_key: :user_id
