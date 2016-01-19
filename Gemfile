@@ -29,7 +29,6 @@ group :test do
   gem 'rspec-rails', '~> 2.0'
   gem 'shoulda-matchers', require: false
   gem 'foobar'
-  gem 'database_cleaner'
   gem 'codeclimate-test-reporter', require: nil
   gem 'simplecov', require: false
 end
