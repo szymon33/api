@@ -6,7 +6,6 @@ module API
     before_filter :guest_not_allowed, except: [:show]
 
     def create
-      return head :forbidden if current_user.guest?
       @comment = Comment.new(params[:comment], post: @post)
       @comment.creator = current_user
       if @comment.save
@@ -34,7 +33,6 @@ module API
     end
 
     def like
-      return head :forbidden if current_user.guest?
       if @comment.like
         head :no_content
       else

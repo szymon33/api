@@ -14,24 +14,33 @@ describe 'Comments' do
   before(:each) { @user = FactoryGirl.create(:user) }
 
   describe 'POST creates my comment' do
-    let(:comment_attr) { FactoryGirl.attributes_for(:comment, post: @post) }
+    let(:create_action) do
+        api_post "/posts/#{@post.id}/comments",
+                 { comment: FactoryGirl.attributes_for(:comment, post_id: @post.id) }.to_json,
+                 headers
+    end
 
     before(:each) { @post = FactoryGirl.create(:post) }
 
     describe 'with valid params' do
       it 'creates my new comment' do
-        api_post "/posts/#{@post.id}/comments",
-                 comment_attr.to_json,
-                 headers
+        create_action
         expect(response.status).to eql 201
         expect(response.content_type).to eql Mime::JSON
         expect(response.location).to eql "http://api.example.com/posts/#{@post.id}"
       end
 
+      it "increases count of post's comments" do
+        expect {
+          create_action
+        }.to change {
+          @post.reload.comments.count
+        }.by(1)
+      end
+
       it 'has creator' do
         @user = FactoryGirl.create(:user) # other user
-
-        api_post "/posts/#{@post.id}/comments", comment_attr.to_json, headers
+        create_action
         expect(response.status).to eql 201
         expect(Comment.last.creator).to_not be nil
         expect(Comment.last.creator).to eql @user
@@ -40,9 +49,8 @@ describe 'Comments' do
 
     describe 'with invalid params' do
       it 'does not create comment with no content' do
-        comment_attr['content'] = nil
         api_post "/posts/#{@post.id}/comments",
-                 comment_attr.to_json,
+                 { comment: { 'content' => nil } }.to_json,
                  headers
         expect(response.status).to eql 422 # unprocessable_entity
         expect(response.content_type).to eql Mime::JSON
@@ -52,7 +60,7 @@ describe 'Comments' do
     describe 'with permissions' do
       it 'is not allowed for guest' do
         @user = FactoryGirl.create(:guest)
-        api_post "/posts/#{@post.id}/comments", comment_attr.to_json, headers
+        create_action
         expect(response.status).to eql 403 # forbidden
       end
     end
@@ -167,7 +175,7 @@ describe 'Comments' do
       it 'increases like counter' do
         expect {
           like
-        }.to change{
+        }.to change {
           basic_comment.reload.like_counter
         }.by(1)
       end

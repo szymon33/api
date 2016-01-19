@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Comment do
   it { validate_presence_of :content }
   it { validate_presence_of :creator }
+  it { validate_presence_of :post }
   it { belong_to(:user).with_foreign_key('user_id') }
   it { belong_to :post }
 
