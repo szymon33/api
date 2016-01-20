@@ -18,7 +18,7 @@ Server: thin
 ```
 ## Credentials
 ### Failing scenario
-* Bad credentials
+**Bad credentials**
 ```
 curl http://api.example.com:3000/posts
 ```
@@ -27,7 +27,7 @@ curl http://api.example.com:3000/posts
 Bad credentials
 ```
 
-* Insufficient privileges
+**Insufficient privileges**
 ```
 curl -X DELETE -u 'guest:123' http://api.example.com:3000/posts/1
 ```
@@ -54,7 +54,7 @@ Server: thin
 ```
 
 ### Successful scenario
-* Retrive all posts
+**Retrive all posts**
 ```
 curl -u 'gates:123' http://api.example.com:3000/posts
 ```
@@ -62,7 +62,7 @@ curl -u 'gates:123' http://api.example.com:3000/posts
 ```json
 [{"content":"Please allow me to disagree with what your subconscious might be telling you after reading the title of my article. I am neither arrogant nor egotistical.","created_at":"2016-01-19T16:55:36Z","id":2,"like_counter":0,"title":"12 Reasons Why I Won\u2019t Add You To My LinkedIn Connections","updated_at":"2016-01-19T16:55:36Z","user_id":3},{"content":"Do you describe yourself differently -- on your website, promotional materials, or especially on social media -- than you do in person? Do you use cheesy clich\u00e9s and overblown superlatives and breathless adjectives? Do you write things about yourself you would never have the nerve to actually say?","created_at":"2016-01-19T16:55:36Z","id":1,"like_counter":1,"title":"Stop Using These 16 Terms to Describe Yourself","updated_at":"2016-01-19T16:55:36Z","user_id":2}]
 ```
-* Admin reads just header
+**Admin reads just header**
 ```
 curl -IH "Accept: application/json" -u 'jobs:123' http://api.example.com:3000/posts
 ```
@@ -79,7 +79,7 @@ X-Runtime: 0.005976
 Connection: close
 Server: thin
 ```
-* Guest reads one comment
+**Guest reads one comment**
 ```
 curl -u 'guest:123' http://api.example.com:3000/posts/1/comments/1
 ```
