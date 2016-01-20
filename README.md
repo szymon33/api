@@ -1,6 +1,6 @@
 # My API (JSON) Example
 [![Code Climate](https://codeclimate.com/github/szymon33/api/badges/gpa.svg)](https://codeclimate.com/github/szymon33/api)
-[![Test Coverage](https://codeclimate.com/github/szymon33/api/badges/coverage.svg)](https://codeclimate.com/github/szymon33/api)
+[![Test Coverage](https://codeclimate.com/github/szymon33/api/badges/coverage.svg)](https://codeclimate.com/github/szymon33/api/coverage)
 
 This is just example web API (JSON) made in Ruby on Rails framework. Very basic functionality.
 
@@ -62,7 +62,7 @@ with the following result
 {"message":"OK"}
 ```
 
-You might inspect how I play with [cURL](https://en.wikipedia.org/wiki/CURL) in the following [sample sessions file](CURL.md).
+You might inspect how I play with [cURL](https://en.wikipedia.org/wiki/CURL) in the following [file](CURL.md).
 
 
 ## Automatic testing
