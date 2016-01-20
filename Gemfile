@@ -31,6 +31,7 @@ group :test do
   gem 'foobar'
   gem 'codeclimate-test-reporter', require: nil
   gem 'simplecov', require: false
+  gem 'database_cleaner'
 end
 
 group :development do

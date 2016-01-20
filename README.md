@@ -58,7 +58,7 @@ curl http://api.example.com:3000
 ```
 
 with the following result
-```console
+```json
 {"message":"OK"}
 ```
 

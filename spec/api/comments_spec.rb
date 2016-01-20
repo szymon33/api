@@ -62,6 +62,7 @@ describe 'Comments' do
         @user = FactoryGirl.create(:guest)
         create_action
         expect(response.status).to eql 403 # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
     end
   end
@@ -97,6 +98,7 @@ describe 'Comments' do
                 { comment: { content: nil } }.to_json,
                 headers
         expect(response.status).to eql(422)
+        expect(response.content_type).to eql Mime::JSON
       end
     end
 
@@ -108,6 +110,7 @@ describe 'Comments' do
                 { comment: { content: 'edited content' } }.to_json,
                 headers
         expect(response.status).to eql(403) # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
 
       it 'is not allowed for other people posts' do
@@ -116,6 +119,7 @@ describe 'Comments' do
         expect(@user).to_not eq stranger
         put_action
         expect(response.status).to eql(403) # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
 
       it 'admin can change it anyway' do
@@ -143,6 +147,7 @@ describe 'Comments' do
         comment = FactoryGirl.create(:comment, creator: guest)
         api_delete "/posts/#{comment.post_id}/comments/#{comment.id}", {}, headers
         expect(response.status).to eql(403) # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
 
       it 'is not allowed for other people comments' do
@@ -151,6 +156,7 @@ describe 'Comments' do
         expect(basic_comment.creator).to_not eql(@user)
         destroy_action
         expect(response.status).to eql(403) # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
 
       it 'admin can destroy it anyway' do
@@ -186,6 +192,7 @@ describe 'Comments' do
       it 'has unsuccessful update' do
         like
         expect(response.status).to eql 422 # unprocessable_entity
+        expect(response.content_type).to eql Mime::JSON
       end
     end
 
@@ -194,6 +201,7 @@ describe 'Comments' do
         @user = FactoryGirl.create(:guest)
         like
         expect(response.status).to eql 403 # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
     end
   end

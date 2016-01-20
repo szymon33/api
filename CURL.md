@@ -18,6 +18,7 @@ Server: thin
 ```
 ## Credentials
 ### Failing scenario
+* Bad credentials
 ```
 curl http://api.example.com:3000/posts
 ```
@@ -25,6 +26,33 @@ curl http://api.example.com:3000/posts
 ```json
 Bad credentials
 ```
+
+* Insufficient privileges
+```
+curl -X DELETE -u 'guest:123' http://api.example.com:3000/posts/1
+```
+
+```json
+Insufficient privileges
+```
+or
+
+```
+curl -X DELETE -Iu 'guest:123' http://api.example.com:3000/posts/1
+```
+
+```json
+HTTP/1.1 403 Forbidden
+Content-Type: application/json; charset=utf-8
+X-UA-Compatible: IE=Edge
+Cache-Control: no-cache
+Set-Cookie: _api_session=BAh7B0kiD3N...; path=/; HttpOnly
+X-Request-Id: 493d5d35040d080f07e5a8697aabe485
+X-Runtime: 0.006008
+Connection: close
+Server: thin
+```
+
 ### Successful scenario
 * Retrive all posts
 ```
@@ -45,7 +73,7 @@ Content-Type: application/json; charset=utf-8
 X-UA-Compatible: IE=Edge
 ETag: "30290383bf8a6b7ffa5056a89237b520"
 Cache-Control: max-age=0, private, must-revalidate
-Set-Cookie: _api_session=BAh7B0kiD3Nlc3Npb25faWQGOgZFVEkiJTU3ZjZhNmFhZGJjZWJlMGNkOTRiMDFhZjE5NjJiNmUxBjsAVEkiDHVzZXJfaWQGOwBGaQg%3D--d07b78cb595c3a9c7259588a2416a30de1713827; path=/; HttpOnly
+Set-Cookie: _api_session=BAh7B0kiD3Nlc3Np...; path=/; HttpOnly
 X-Request-Id: 3795240c2eb24f39cb82416e72aa88b6
 X-Runtime: 0.005976
 Connection: close

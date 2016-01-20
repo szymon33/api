@@ -20,13 +20,15 @@ describe 'Posts' do
   end
 
   describe 'POST creates my post' do
-    let(:post_attr) { FactoryGirl.attributes_for(:post) }
+    let(:create_action) do
+      api_post '/posts',
+               FactoryGirl.attributes_for(:post).to_json,
+               headers
+    end
 
     describe 'with valid params' do
       it 'creates my new post' do
-        api_post '/posts',
-                 post_attr.to_json,
-                 headers
+        create_action
         expect(response.status).to eql 201
         expect(response.content_type).to eql Mime::JSON
         expect(response.location).to eql "http://api.example.com/posts/#{Post.last.id}"
@@ -35,7 +37,7 @@ describe 'Posts' do
       it 'has creator' do
         @user = FactoryGirl.create(:user, username: 'Clu')
 
-        api_post '/posts', post_attr.to_json, headers
+        create_action
         expect(response.status).to eql 201
         expect(Post.last.creator).to_not be nil
         expect(Post.last.creator).to eql @user
@@ -44,8 +46,8 @@ describe 'Posts' do
 
     describe 'with invalid params' do
       it 'does not create post with no content' do
-        post_attr['content'] = nil
-        api_post '/posts', post_attr.to_json,
+        api_post '/posts',
+                 { post: { 'content' => nil } }.to_json,
                  headers
         expect(response.status).to eql 422 # unprocessable_entity
         expect(response.content_type).to eql Mime::JSON
@@ -55,10 +57,9 @@ describe 'Posts' do
     describe 'with permissions' do
       it 'is not allowed for guest' do
         @user = FactoryGirl.create(:guest)
-        api_post '/posts',
-                 post_attr.to_json,
-                 headers
+        create_action
         expect(response.status).to eql 403 # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
     end
   end
@@ -94,6 +95,7 @@ describe 'Posts' do
                 { post: { content: nil } }.to_json,
                 headers
         expect(response.status).to eql(422)
+        expect(response.content_type).to eql Mime::JSON
       end
     end
 
@@ -105,6 +107,7 @@ describe 'Posts' do
                 { post: { content: 'edited content' } }.to_json,
                 headers
         expect(response.status).to eql(403) # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
 
       it 'is not allowed for other people posts' do
@@ -113,6 +116,7 @@ describe 'Posts' do
         expect(@user).to_not eq stranger
         put_action
         expect(response.status).to eql(403) # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
 
       it 'admin can change it anyway' do
@@ -139,6 +143,7 @@ describe 'Posts' do
         post = FactoryGirl.create(:post, creator: guest)
         api_delete "/posts/#{post.id}", {}, headers
         expect(response.status).to eql(403) # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
 
       it 'is not allowed for other people posts' do
@@ -147,6 +152,7 @@ describe 'Posts' do
         expect(basic_post.creator).to_not eql(@user)
         destroy_action
         expect(response.status).to eql(403) # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
 
       it 'admin can destroy it anyway' do
@@ -182,6 +188,7 @@ describe 'Posts' do
       it 'has unsuccessful update' do
         like
         expect(response.status).to eql 422 # unprocessable_entity
+        expect(response.content_type).to eql Mime::JSON
       end
     end
 
@@ -190,6 +197,7 @@ describe 'Posts' do
         @user = FactoryGirl.create(:guest)
         like
         expect(response.status).to eql 403 # forbidden
+        expect(response.content_type).to eql Mime::JSON
       end
     end
   end

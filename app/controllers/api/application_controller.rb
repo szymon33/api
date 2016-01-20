@@ -13,6 +13,10 @@ module API
       end
     end
 
+    def render_forbidden
+      render json: 'Insufficient privileges', status: 403
+    end
+
     def current_user
       User.find(session[:user_id])
     end
@@ -33,7 +37,7 @@ module API
     end
 
     def guest_not_allowed
-      head 403 if current_user.guest? # forbidden
+      render_forbidden if current_user.guest?
     end
   end
 end

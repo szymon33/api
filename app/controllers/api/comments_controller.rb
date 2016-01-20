@@ -52,7 +52,7 @@ module API
 
     def user_not_allowed
       unless (current_user.user? && @comment.creator == current_user) || current_user.admin?
-        head 403 # forbidden
+        render_forbidden
       end
     end
   end
