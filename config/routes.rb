@@ -6,7 +6,7 @@ Api::Application.routes.draw do
       member do
         put :like
       end
-      resources :comments, except: [:new, :edit, :index] do
+      resources :comments, except: [:new, :edit] do
         member do
           put :like
         end

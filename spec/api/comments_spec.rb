@@ -2,40 +2,46 @@ require 'spec_helper'
 
 describe 'Comments' do
   let(:headers) do
-    {
-      'ACCEPT' => Mime::JSON,
-      'CONTENT_TYPE' => 'application/json',
-      'HTTP_AUTHORIZATION' => encode_credentials(@user.username, @user.password)
-    }
+  {
+    'ACCEPT' => Mime::JSON,
+    'CONTENT_TYPE' => 'application/json',
+    'HTTP_AUTHORIZATION' => encode_credentials(@user.username, @user.password)
+  }
   end
 
   let(:basic_comment) { FactoryGirl.create(:comment, creator: @user) }
 
   before(:each) { @user = FactoryGirl.create(:user) }
 
+  it 'GET index returns comments for specific post' do
+    api_get "/posts/#{basic_comment.post.id}/comments", { format: :json }, headers
+    expect(response.status).to eq(200)
+    expect(response.content_type).to eql Mime::JSON
+  end
+
   describe 'POST creates my comment' do
     let(:create_action) do
-        api_post "/posts/#{@post.id}/comments",
-                 { comment: FactoryGirl.attributes_for(:comment, post_id: @post.id) }.to_json,
+        api_post "/posts/#{basic_comment.post.id}/comments",
+                 { comment: FactoryGirl.attributes_for(:comment, post_id: basic_comment.id) }.to_json,
                  headers
     end
 
     before(:each) { @post = FactoryGirl.create(:post) }
 
     describe 'with valid params' do
-      it 'creates my new comment' do
+      it 'is valid' do
         create_action
         expect(response.status).to eql 201
         expect(response.content_type).to eql Mime::JSON
-        expect(response.location).to eql "http://api.example.com/posts/#{@post.id}"
+        expect(response.location).to eql "http://api.example.com/posts/#{basic_comment.post.id}"
       end
 
       it "increases count of post's comments" do
-        expect {
-          create_action
-        }.to change {
-          @post.reload.comments.count
-        }.by(1)
+        expect do
+          api_post "/posts/#{@post.id}/comments",
+                   { comment: FactoryGirl.attributes_for(:comment, post_id: @post.id) }.to_json,
+                   headers
+        end.to change { @post.reload.comments.count }.by(1)
       end
 
       it 'has creator' do

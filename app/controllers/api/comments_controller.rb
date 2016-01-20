@@ -1,9 +1,16 @@
 module API
   class CommentsController < ApplicationController
-    before_filter :set_post, only: :create
-    before_filter :set_comment, except: :create
+    before_filter :set_comment, except: [:index, :create]
+    before_filter :set_post, only: [:create, :index, :show]    
     before_filter :user_not_allowed, only: [:update, :destroy]
-    before_filter :guest_not_allowed, except: [:show]
+    before_filter :guest_not_allowed, except: [:index, :show]
+
+    def index
+      comments = Comment.all
+      respond_to do |format|
+        format.json { render json: comments, status: 200, location: [:api, @post] }
+      end
+    end
 
     def create
       @comment = Comment.new(params[:comment], post: @post)
@@ -16,7 +23,7 @@ module API
     end
 
     def show
-      render json: @comment, status: 200
+      render json: @comment, status: 200, location: [:api, @post]
     end
 
     def update
