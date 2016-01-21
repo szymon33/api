@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe 'Comments' do
   let(:headers) do
-  {
-    'ACCEPT' => Mime::JSON,
-    'CONTENT_TYPE' => 'application/json',
-    'HTTP_AUTHORIZATION' => encode_credentials(@user.username, @user.password)
-  }
+    {
+      'ACCEPT' => Mime::JSON,
+      'CONTENT_TYPE' => 'application/json',
+      'HTTP_AUTHORIZATION' => encode_credentials(@user.username, @user.password)
+    }
   end
 
   let(:basic_comment) { FactoryGirl.create(:comment, creator: @user) }
@@ -21,9 +21,9 @@ describe 'Comments' do
 
   describe 'POST creates my comment' do
     let(:create_action) do
-        api_post "/posts/#{basic_comment.post.id}/comments",
-                 { comment: FactoryGirl.attributes_for(:comment, post_id: basic_comment.id) }.to_json,
-                 headers
+      api_post "/posts/#{basic_comment.post.id}/comments",
+               { comment: FactoryGirl.attributes_for(:comment, post_id: basic_comment.id) }.to_json,
+               headers
     end
 
     before(:each) { @post = FactoryGirl.create(:post) }
@@ -176,7 +176,11 @@ describe 'Comments' do
   end
 
   describe 'LIKE action' do
-    let(:like) { api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}/like", nil, headers }
+    let(:like) do
+      api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}/like",
+              nil,
+              headers
+    end
 
     describe 'when valid' do
       it 'has resonse status with no content' do
@@ -185,11 +189,7 @@ describe 'Comments' do
       end
 
       it 'increases like counter' do
-        expect {
-          like
-        }.to change {
-          basic_comment.reload.like_counter
-        }.by(1)
+        expect { like }.to change { basic_comment.reload.like_counter }.by(1)
       end
     end
 

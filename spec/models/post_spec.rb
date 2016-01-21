@@ -20,8 +20,6 @@ describe Post do
   end
 
   it 'can increase like counter' do
-    expect {
-      post.like
-    }.to change { post.like_counter }.by(1)
+    expect { post.like }.to change { post.like_counter }.by(1)
   end
 end

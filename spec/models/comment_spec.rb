@@ -20,10 +20,6 @@ describe Comment do
   end
 
   it 'can increase like counter' do
-    expect {
-      comment.like
-    }.to change {
-      comment.like_counter
-    }.by(1)
+    expect { comment.like }.to change { comment.like_counter }.by(1)
   end
 end

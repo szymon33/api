@@ -175,16 +175,13 @@ describe 'Posts' do
       end
 
       it 'increases my like counter' do
-        expect {
-          like
-        }.to change{
-          basic_post.reload.like_counter
-        }.by(1)
+        expect { like }.to change { basic_post.reload.like_counter }.by(1)
       end
     end
 
     describe 'when invalid' do
       before(:each) { allow_any_instance_of(Post).to receive(:save).and_return(false) }
+
       it 'has unsuccessful update' do
         like
         expect(response.status).to eql 422 # unprocessable_entity

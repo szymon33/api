@@ -1,7 +1,7 @@
 module API
   class CommentsController < ApplicationController
     before_filter :set_comment, except: [:index, :create]
-    before_filter :set_post, only: [:create, :index, :show]    
+    before_filter :set_post, only: [:create, :index, :show]
     before_filter :user_not_allowed, only: [:update, :destroy]
     before_filter :guest_not_allowed, except: [:index, :show]
 
@@ -58,9 +58,8 @@ module API
     end
 
     def user_not_allowed
-      unless (current_user.user? && @comment.creator == current_user) || current_user.admin?
-        render_forbidden
-      end
+      !(current_user.user? && @comment.creator == current_user) &&
+        !current_user.admin? && render_forbidden
     end
   end
 end

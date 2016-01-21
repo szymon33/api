@@ -54,9 +54,8 @@ module API
     end
 
     def user_not_allowed
-      unless (current_user.user? && @post.creator == current_user) || current_user.admin?
-        render_forbidden
-      end
+      !(current_user.user? && @post.creator == current_user) &&
+        !current_user.admin? && render_forbidden
     end
   end
 end
