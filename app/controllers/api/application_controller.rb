@@ -17,6 +17,10 @@ module API
       render json: 'Insufficient privileges', status: 403
     end
 
+    def render_not_found
+      render json: 'Not Found', status: 404
+    end
+
     def current_user
       User.find(session[:user_id])
     end

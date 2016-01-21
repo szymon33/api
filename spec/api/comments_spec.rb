@@ -119,13 +119,25 @@ describe 'Comments' do
         expect(response.content_type).to eql Mime::JSON
       end
 
-      it 'is not allowed for other people posts' do
-        stranger = FactoryGirl.create(:user)
-        basic_comment.update_attribute(:creator, stranger)
-        expect(@user).to_not eq stranger
-        put_action
-        expect(response.status).to eql(403) # forbidden
-        expect(response.content_type).to eql Mime::JSON
+      describe 'user' do
+        let!(:stranger) { FactoryGirl.create(:user) }
+
+        it 'can not change other people comments' do
+          basic_comment.update_attribute(:creator, stranger)
+          expect(@user).to_not eq stranger
+          put_action
+          expect(response.status).to eql(403) # forbidden
+          expect(response.content_type).to eql Mime::JSON
+        end
+
+        it 'can not change creator field' do
+          expect(basic_comment.creator).to eql(@user)
+          api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
+                  { comment: { user_id: stranger.id } }.to_json,
+                  headers
+          expect(response.status).to eql(404) # not found
+          expect(response.content_type).to eql Mime::JSON
+        end
       end
 
       it 'admin can change it anyway' do

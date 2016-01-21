@@ -27,6 +27,11 @@ module API
     end
 
     def update
+      # prevent hacking comment creator attribute
+      current_user.user? &&
+        @comment && params[:comment].include?(:user_id) &&
+        render_not_found && return
+
       if @comment.update_attributes(params[:comment])
         head :no_content
       else
