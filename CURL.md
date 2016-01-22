@@ -53,24 +53,6 @@ Connection: close
 Server: thin
 ```
 
-**Hacking post creator attribute**
-Registered user who tries to to hack API like the following
-```json
-curl -X PUT -d 'post[user_id]=4' -u 'gates:123' -iH "Accept: application/json" http://api.example.com:3000/posts/1
-```
-would receive '404 Not Found' error instead of '500 Internal Server Error'
-```json
-HTTP/1.1 404 Not Found
-Content-Type: application/json; charset=utf-8
-X-UA-Compatible: IE=Edge
-Cache-Control: no-cache
-Set-Cookie: _api_session=BAh7B0kiD3Nlc3Npb25...; path=/; HttpOnly
-X-Request-Id: b4d4bc7ee86d0c1e4f476aaec79522a3
-X-Runtime: 0.311185
-Connection: close
-Server: thin
-```
-
 ### Successful scenario
 **Retrive all posts**
 ```

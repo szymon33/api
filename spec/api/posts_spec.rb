@@ -142,11 +142,11 @@ describe 'Posts' do
 
         it 'can not change creator attribute' do
           expect(basic_post.creator).to eql(@user)
-          api_put "/posts/#{basic_post.id}",
-                  { post: { user_id: stranger.id } }.to_json,
-                  headers
-          expect(response.status).to eql(404) # not found
-          expect(response.content_type).to eql Mime::JSON
+          expect do
+            api_put "/posts/#{basic_post.id}",
+                    { post: { user_id: stranger.id } }.to_json,
+                    headers
+          end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
         end
       end
 

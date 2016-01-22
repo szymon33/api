@@ -27,11 +27,6 @@ module API
     end
 
     def update
-      # prevent hacking post creator attribute
-      current_user.user? &&
-        @post && params[:post].include?(:user_id) &&
-        render_not_found && return
-
       if @post.update_attributes(params[:post])
         head :no_content
       else

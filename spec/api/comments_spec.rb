@@ -31,8 +31,8 @@ describe 'Comments' do
 
   describe 'POST create' do
     let(:create_action) do
-      api_post "/posts/#{basic_comment.post.id}/comments",
-               { comment: FactoryGirl.attributes_for(:comment, post_id: basic_comment.id) }.to_json,
+      api_post "/posts/#{@post.id}/comments",
+               { comment: FactoryGirl.attributes_for(:comment) }.to_json,
                headers
     end
 
@@ -43,13 +43,13 @@ describe 'Comments' do
         create_action
         expect(response.status).to eql 201
         expect(response.content_type).to eql Mime::JSON
-        expect(response.location).to eql "http://api.example.com/posts/#{basic_comment.post.id}"
+        expect(response.location).to eql "http://api.example.com/posts/#{@post.id}"
       end
 
-      it "increases count of post's comments" do
+      it "increas§es count of post's comments" do
         expect do
           api_post "/posts/#{@post.id}/comments",
-                   { comment: FactoryGirl.attributes_for(:comment, post_id: @post.id) }.to_json,
+                   { comment: FactoryGirl.attributes_for(:comment) }.to_json,
                    headers
         end.to change { @post.reload.comments.count }.by(1)
       end
@@ -150,11 +150,11 @@ describe 'Comments' do
 
         it 'can not change creator attribute' do
           expect(basic_comment.creator).to eql(@user)
-          api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
-                  { comment: { user_id: stranger.id } }.to_json,
-                  headers
-          expect(response.status).to eql(404) # not found
-          expect(response.content_type).to eql Mime::JSON
+          expect do
+            api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
+                    { comment: { user_id: stranger.id } }.to_json,
+                    headers
+          end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
         end
       end
 

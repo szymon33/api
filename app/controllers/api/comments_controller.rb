@@ -13,7 +13,8 @@ module API
     end
 
     def create
-      @comment = Comment.new(params[:comment], post: @post)
+      @comment = Comment.new(params[:comment])
+      @comment.post = @post
       @comment.creator = current_user
       if @comment.save
         render json: @comment, status: 201, location: [:api, @post] # created
@@ -27,11 +28,6 @@ module API
     end
 
     def update
-      # prevent hacking comment creator attribute
-      current_user.user? &&
-        @comment && params[:comment].include?(:user_id) &&
-        render_not_found && return
-
       if @comment.update_attributes(params[:comment])
         head :no_content
       else

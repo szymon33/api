@@ -1,7 +1,7 @@
 class Post < ActiveRecord::Base
   include Like
 
-  attr_accessible :content, :title, :like_counter, :user_id
+  attr_accessible :content, :title, :like_counter
 
   has_many :comments, dependent: :destroy
   accepts_nested_attributes_for  :comments
