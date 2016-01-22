@@ -29,7 +29,7 @@ Bad credentials
 
 **Insufficient privileges**
 ```
-curl -X DELETE -u 'guest:123' http://api.example.com:3000/posts/1
+curl -X DELETE -H "Accept: application/json" -u 'user:123' http://api.example.com:3000/posts/2
 ```
 
 ```json
@@ -38,7 +38,7 @@ Insufficient privileges
 or
 
 ```
-curl -X DELETE -Iu 'guest:123' http://api.example.com:3000/posts/1
+curl -X DELETE -IH "Accept: application/json" -u 'user:123' http://api.example.com:3000/posts/2
 ```
 
 ```json
@@ -56,16 +56,16 @@ Server: thin
 ### Successful scenario
 **Retrive all posts**
 ```
-curl -X PUT -d 'post[user_id]=4' -u 'gates:123' -iH "Accept: application/json" http://api.example.com:3000/posts/1
+curl http://api.example.com:3000/posts
 ```
 
 ```json
-[{"content":"Please allow me to disagree with what your subconscious might be telling you after reading the title of my article. I am neither arrogant nor egotistical.","created_at":"2016-01-19T16:55:36Z","id":2,"like_counter":0,"title":"12 Reasons Why I Won\u2019t Add You To My LinkedIn Connections","updated_at":"2016-01-19T16:55:36Z","user_id":3},{"content":"Do you describe yourself differently -- on your website, promotional materials, or especially on social media -- than you do in person? Do you use cheesy clich\u00e9s and overblown superlatives and breathless adjectives? Do you write things about yourself you would never have the nerve to actually say?","created_at":"2016-01-19T16:55:36Z","id":1,"like_counter":1,"title":"Stop Using These 16 Terms to Describe Yourself","updated_at":"2016-01-19T16:55:36Z","user_id":2}]
+[{"content":"Do you describe yourself differently -- on your website, promotional materials, or especially on social media -- than you do in person? Do you use cheesy clich\u00e9s and overblown superlatives and breathless adjectives? Do you write things about yourself you would never have the nerve to actually say?","created_at":"2016-01-22T17:50:00Z","id":1,"like_counter":0,"title":"Stop Using These 16 Terms to Describe Yourself","updated_at":"2016-01-22T17:50:00Z","user_id":1},{"content":"Please allow me to disagree with what your subconscious might be telling you after reading the title of my article. I am neither arrogant nor egotistical.","created_at":"2016-01-22T17:50:00Z","id":2,"like_counter":0,"title":"12 Reasons Why I Won\u2019t Add You To My LinkedIn Connections","updated_at":"2016-01-22T17:50:00Z","user_id":2}]
 ```
 
 **Guest reads one comment**
 ```
-curl -u 'guest:123' http://api.example.com:3000/posts/1/comments/1
+curl http://api.example.com:3000/posts/1/comments/1
 ```
 
 ```json
@@ -74,7 +74,7 @@ curl -u 'guest:123' http://api.example.com:3000/posts/1/comments/1
 
 **User changes his post content**
 ```
-curl -X PUT -d 'post[content]=bla bla' -u 'gates:123' -iH "Accept: application/json" http://api.example.com:3000/posts/1
+curl -X PUT -d 'post[content]=bla bla' -u 'user:123' -iH "Accept: application/json" http://api.example.com:3000/posts/1
 ```
 
 ```json
