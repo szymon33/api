@@ -15,7 +15,7 @@ module API
     def create
       @comment = Comment.new(params[:comment])
       @comment.post = @post
-      @comment.creator = current_user
+      @comment.creator = @current_user
       if @comment.save
         render json: @comment, status: 201, location: [:api, @post] # created
       else
@@ -59,8 +59,8 @@ module API
     end
 
     def user_not_allowed
-      !(current_user.user? && @comment.creator == current_user) &&
-        !current_user.admin? && render_forbidden
+      !(@current_user.user? && @comment.creator == @current_user) &&
+        !@current_user.admin? && render_forbidden
     end
   end
 end

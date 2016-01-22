@@ -21,10 +21,6 @@ module API
       render json: 'Not Found', status: 404
     end
 
-    def current_user
-      User.find(session[:user_id])
-    end
-
     protected
 
     def authenticate
@@ -33,10 +29,7 @@ module API
 
     def authenticate_basic_auth
       authenticate_with_http_basic do |username, password|
-        if User.authenticate(username, password)
-          session[:user_id] = User.find_by_username!(username).id
-          true
-        end
+        @current_user = User.find_by_username!(username) if User.authenticate(username, password)
       end
     end
   end

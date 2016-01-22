@@ -1,7 +1,11 @@
+require 'bcrypt'
+
 class User < ActiveRecord::Base
+  include BCrypt
+
   ROLES = %w(user admin).freeze
 
-  attr_accessible :password, :username, :role
+  attr_accessible :username, :role
 
   has_many :comments
   has_many :posts
@@ -15,8 +19,17 @@ class User < ActiveRecord::Base
   end
 
   def self.authenticate(username, password)
-    if u = User.find_by_username(username)
-      u.password == password
+    if user = User.find_by_username(username)
+      password == user.password
     end
+  end
+
+  def password
+    @password ||= Password.new(password_hash)
+  end
+
+  def password=(new_password)
+    @password = Password.create(new_password)
+    self.password_hash = @password
   end
 end

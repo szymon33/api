@@ -18,3 +18,5 @@ group :development do
   gem 'thin' # if not werbrick
   gem 'pry'
 end
+
+gem 'bcrypt', '~> 3.1.7'

@@ -46,7 +46,7 @@ describe 'Comments' do
         expect(response.location).to eql "http://api.example.com/posts/#{@post.id}"
       end
 
-      it "increas§es count of post's comments" do
+      it "increases count of post's comments" do
         expect do
           api_post "/posts/#{@post.id}/comments",
                    { comment: FactoryGirl.attributes_for(:comment) }.to_json,

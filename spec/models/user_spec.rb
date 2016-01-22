@@ -17,8 +17,10 @@ describe User do
   end
 
   describe 'role' do
-    it 'is guest by default' do
-      user = User.create(username: 'bleble', password: '123')
+    it 'is user by default' do
+      user = User.new(username: 'bleble')
+      user.password = '123'
+      user.save!
       expect(user.role).to eql 'user'
       expect(user).to be_user
     end
