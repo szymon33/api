@@ -39,9 +39,5 @@ module API
         end
       end
     end
-
-    def guest_not_allowed
-      render_forbidden if current_user.guest?
-    end
   end
 end

@@ -1,8 +1,8 @@
 module API
   class PostsController < ApplicationController
+    skip_before_filter :authenticate, only: [:index, :show]
     before_filter :set_post, except: [:index, :create]
     before_filter :user_not_allowed, only: [:update, :destroy]
-    before_filter :guest_not_allowed, except: [:index, :show]
 
     def index
       posts = Post.all

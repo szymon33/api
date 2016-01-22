@@ -13,13 +13,23 @@ describe 'Posts' do
 
   before(:each) { @user = FactoryGirl.create(:user) }
 
-  it 'GET index returns posts in JSON' do
-    api_get '/posts', { format: :json }, headers
-    expect(response.status).to eq(200)
-    expect(response.content_type).to eql Mime::JSON
+  describe 'GET index' do
+    it 'is success' do
+      api_get '/posts', { format: :json }, headers
+      expect(response.status).to eq(200) # success
+      expect(response.content_type).to eql Mime::JSON
+    end
+
+    describe 'without authentication' do
+      it 'is allowed' do
+        api_get '/posts', format: :json
+        expect(response.status).to eq(200) # success
+        expect(response.content_type).to eql Mime::JSON
+      end
+    end
   end
 
-  describe 'POST creates my post' do
+  describe 'POST create' do
     let(:create_action) do
       api_post '/posts',
                FactoryGirl.attributes_for(:post).to_json,
@@ -27,16 +37,19 @@ describe 'Posts' do
     end
 
     describe 'with valid params' do
-      it 'creates my new post' do
+      it 'returns created code' do
         create_action
-        expect(response.status).to eql 201
+        expect(response.status).to eql 201 # created
         expect(response.content_type).to eql Mime::JSON
         expect(response.location).to eql "http://api.example.com/posts/#{Post.last.id}"
       end
 
-      it 'has creator' do
-        @user = FactoryGirl.create(:user, username: 'Clu')
+      it 'creates new post' do
+        expect { create_action }.to change { Post.count }.by(1)
+      end
 
+      it 'has creator' do
+        @user = FactoryGirl.create(:user) # other user
         create_action
         expect(response.status).to eql 201
         expect(Post.last.creator).to_not be nil
@@ -45,7 +58,7 @@ describe 'Posts' do
     end
 
     describe 'with invalid params' do
-      it 'does not create post with no content' do
+      it 'returns unprocessable entity code' do
         api_post '/posts',
                  { post: { 'content' => nil } }.to_json,
                  headers
@@ -54,23 +67,28 @@ describe 'Posts' do
       end
     end
 
-    describe 'with permissions' do
-      it 'is not allowed for guest' do
-        @user = FactoryGirl.create(:guest)
-        create_action
-        expect(response.status).to eql 403 # forbidden
+    describe 'without authentication' do
+      it 'returns unauthorized code' do
+        api_post '/posts', format: :json
+        expect(response.status).to eql 401 # unauthorized
         expect(response.content_type).to eql Mime::JSON
       end
     end
   end
 
   describe 'GET show' do
-    it 'gets single post' do
-      api_get "/posts/#{basic_post.id}",
-              basic_post.to_json,
-              headers
-      expect(response.status).to eql 200
+    it 'is success' do
+      api_get "/posts/#{basic_post.id}", headers
+      expect(response.status).to eql 200 # success
       expect(response.content_type).to eql Mime::JSON
+    end
+
+    describe 'without authentication' do
+      it 'is allowed' do
+        api_get "/posts/#{basic_post.id}", basic_post.to_json, format: :json
+        expect(response.status).to eql 200 # success
+        expect(response.content_type).to eql Mime::JSON
+      end
     end
   end
 
@@ -82,15 +100,18 @@ describe 'Posts' do
     end
 
     describe 'with valid params' do
-      it 'updates my requested post' do
+      it 'updates requested post' do
+        expect { put_action }.to change { basic_post.reload.content }
+      end
+
+      it 'returns no content code' do
         put_action
         expect(response.status).to eql(204) # no_content
-        expect(basic_post.reload.content).to eql 'edited content'
       end
     end
 
     describe 'with invalid params' do
-      it 'unsuccessfull update with no content' do
+      it 'returns unprocessable entity' do
         api_put "/posts/#{basic_post.id}",
                 { post: { content: nil } }.to_json,
                 headers
@@ -99,20 +120,18 @@ describe 'Posts' do
       end
     end
 
-    describe 'with permissions' do
-      it 'is not allowed for guest' do
-        guest = FactoryGirl.create(:guest)
-        post = FactoryGirl.create(:post, creator: guest)
-        api_put "/posts/#{post.id}",
-                { post: { content: 'edited content' } }.to_json,
-                headers
-        expect(response.status).to eql(403) # forbidden
+    describe 'without authentication' do
+      it 'returns unauthorized code' do
+        api_put "/posts/#{basic_post.id}", format: :json
+        expect(response.status).to eql(401) # unauthorized
         expect(response.content_type).to eql Mime::JSON
       end
+    end
+
+    describe 'with permissions' do
+      let!(:stranger) { FactoryGirl.create(:user) }
 
       describe 'user' do
-        let!(:stranger) { FactoryGirl.create(:user) }
-
         it 'can not change other people posts' do
           basic_post.update_attribute(:creator, stranger)
           expect(@user).to_not eq stranger
@@ -121,7 +140,7 @@ describe 'Posts' do
           expect(response.content_type).to eql Mime::JSON
         end
 
-        it 'can not change creator field' do
+        it 'can not change creator attribute' do
           expect(basic_post.creator).to eql(@user)
           api_put "/posts/#{basic_post.id}",
                   { post: { user_id: stranger.id } }.to_json,
@@ -131,12 +150,13 @@ describe 'Posts' do
         end
       end
 
-      it 'admin can change it anyway' do
-        user1 = FactoryGirl.create(:user)
-        basic_post.update_attribute(:creator, user1)
-        @user = FactoryGirl.create(:admin)
-        put_action
-        expect(response.status).to eql(204) # no_content
+      describe 'admin' do
+        it 'changes other people creator attribute' do
+          basic_post.update_attribute(:creator, stranger)
+          @user = FactoryGirl.create(:admin)
+          put_action
+          expect(response.status).to eql(204) # no_content
+        end
       end
     end
   end
@@ -144,35 +164,43 @@ describe 'Posts' do
   describe 'DELETE destroy' do
     let(:destroy_action) { api_delete "/posts/#{basic_post.id}", {}, headers }
 
-    it 'destroys my requested post' do
+    it 'returns no content code' do
       destroy_action
       expect(response.status).to eql(204) # no content
     end
 
+    it 'deletes a post' do
+      basic_post
+      expect { destroy_action }.to change { Post.count }.by(-1)
+    end
+
+    describe 'without authentication' do
+      it 'returns unauthorized code' do
+        api_delete "/posts/#{basic_post.id}", format: :json
+        expect(response.status).to eql(401) # Unauthorized
+        expect(response.content_type).to eql Mime::JSON
+      end
+    end
+
     describe 'with permissions' do
-      it 'is not allowed for guest' do
-        guest = FactoryGirl.create(:guest)
-        post = FactoryGirl.create(:post, creator: guest)
-        api_delete "/posts/#{post.id}", {}, headers
-        expect(response.status).to eql(403) # forbidden
-        expect(response.content_type).to eql Mime::JSON
+      describe 'user' do
+        it 'is not allowed for other people posts' do
+          basic_post
+          @user = FactoryGirl.create(:user) # new current user
+          expect(basic_post.creator).to_not eql(@user)
+          destroy_action
+          expect(response.status).to eql(403) # forbidden
+          expect(response.content_type).to eql Mime::JSON
+        end
       end
 
-      it 'is not allowed for other people posts' do
-        basic_post
-        @user = FactoryGirl.create(:user) # new current user
-        expect(basic_post.creator).to_not eql(@user)
-        destroy_action
-        expect(response.status).to eql(403) # forbidden
-        expect(response.content_type).to eql Mime::JSON
-      end
-
-      it 'admin can destroy it anyway' do
-        basic_post
-        @user = FactoryGirl.create(:admin)
-        expect(basic_post.creator).to_not eql(@user)
-        destroy_action
-        expect(response.status).to eql(204) # no_content
+      describe 'admin' do
+        it 'deletes other people posts' do
+          basic_post
+          @user = FactoryGirl.create(:admin)
+          expect(basic_post.creator).to_not eql(@user)
+          expect { destroy_action }.to change { Post.count }.by(-1)
+        end
       end
     end
   end
@@ -181,12 +209,12 @@ describe 'Posts' do
     let(:like) { api_put "/posts/#{basic_post.id}/like", nil, headers }
 
     describe 'when valid' do
-      it 'has response status with no content' do
+      it 'returns no content code' do
         like
         expect(response.status).to eql(204) # no_content
       end
 
-      it 'increases my like counter' do
+      it 'increases like counter' do
         expect { like }.to change { basic_post.reload.like_counter }.by(1)
       end
     end
@@ -194,18 +222,17 @@ describe 'Posts' do
     describe 'when invalid' do
       before(:each) { allow_any_instance_of(Post).to receive(:save).and_return(false) }
 
-      it 'has unsuccessful update' do
+      it 'returns unprocessable entity code' do
         like
         expect(response.status).to eql 422 # unprocessable_entity
         expect(response.content_type).to eql Mime::JSON
       end
     end
 
-    describe 'with permissions' do
-      it 'is not allowed for guest' do
-        @user = FactoryGirl.create(:guest)
-        like
-        expect(response.status).to eql 403 # forbidden
+    describe 'without authentication' do
+      it 'returns unauthorized code' do
+        api_put "/posts/#{basic_post.id}/like", format: :json
+        expect(response.status).to eql 401 # unauthorized
         expect(response.content_type).to eql Mime::JSON
       end
     end

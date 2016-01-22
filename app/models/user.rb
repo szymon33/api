@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  ROLES = %w(guest user admin).freeze
+  ROLES = %w(user admin).freeze
 
   attr_accessible :password, :username, :role
 

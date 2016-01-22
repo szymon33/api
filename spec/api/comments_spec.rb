@@ -13,13 +13,23 @@ describe 'Comments' do
 
   before(:each) { @user = FactoryGirl.create(:user) }
 
-  it 'GET index returns comments for specific post' do
-    api_get "/posts/#{basic_comment.post.id}/comments", { format: :json }, headers
-    expect(response.status).to eq(200)
-    expect(response.content_type).to eql Mime::JSON
+  describe 'GET index' do
+    it 'is success' do
+      api_get "/posts/#{basic_comment.post.id}/comments", { format: :json }, headers
+      expect(response.status).to eq(200) # success
+      expect(response.content_type).to eql Mime::JSON
+    end
+
+    describe 'without authentication' do
+      it 'is allowed' do
+        api_get "/posts/#{basic_comment.post.id}/comments", format: :json
+        expect(response.status).to eq(200) # success
+        expect(response.content_type).to eql Mime::JSON
+      end
+    end
   end
 
-  describe 'POST creates my comment' do
+  describe 'POST create' do
     let(:create_action) do
       api_post "/posts/#{basic_comment.post.id}/comments",
                { comment: FactoryGirl.attributes_for(:comment, post_id: basic_comment.id) }.to_json,
@@ -29,7 +39,7 @@ describe 'Comments' do
     before(:each) { @post = FactoryGirl.create(:post) }
 
     describe 'with valid params' do
-      it 'is valid' do
+      it 'returns created code' do
         create_action
         expect(response.status).to eql 201
         expect(response.content_type).to eql Mime::JSON
@@ -54,7 +64,7 @@ describe 'Comments' do
     end
 
     describe 'with invalid params' do
-      it 'does not create comment with no content' do
+      it 'returns unprocessable entity code' do
         api_post "/posts/#{@post.id}/comments",
                  { comment: { 'content' => nil } }.to_json,
                  headers
@@ -63,23 +73,30 @@ describe 'Comments' do
       end
     end
 
-    describe 'with permissions' do
-      it 'is not allowed for guest' do
-        @user = FactoryGirl.create(:guest)
-        create_action
-        expect(response.status).to eql 403 # forbidden
+    describe 'without authentication' do
+      it 'returns unauthorized code' do
+        api_post "/posts/#{basic_comment.post.id}/comments", format: :json
+        expect(response.status).to eql 401 # unauthorized
         expect(response.content_type).to eql Mime::JSON
       end
     end
   end
 
   describe 'GET show' do
-    it 'gets single comment' do
+    it 'is success' do
       api_get "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
-              basic_comment.to_json,
               headers
-      expect(response.status).to eql 200
+      expect(response.status).to eql 200 # success
       expect(response.content_type).to eql Mime::JSON
+    end
+
+    describe 'without authentication' do
+      it 'is allowed' do
+        api_get "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
+                format: :json
+        expect(response.status).to eql 200 # success
+        expect(response.content_type).to eql Mime::JSON
+      end
     end
   end
 
@@ -91,15 +108,18 @@ describe 'Comments' do
     end
 
     describe 'with valid params' do
-      it 'updates my requested comment' do
+      it 'updates requested comment' do
+        expect { put_action }.to change { basic_comment.reload.content }
+      end
+
+      it 'returns no content code' do
         put_action
         expect(response.status).to eql(204) # no_content
-        expect(basic_comment.reload.content).to eql 'edited content'
       end
     end
 
     describe 'with invalid params' do
-      it 'unsuccessfull update with no content' do
+      it 'returns unprocessable entity' do
         api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
                 { comment: { content: nil } }.to_json,
                 headers
@@ -108,20 +128,18 @@ describe 'Comments' do
       end
     end
 
-    describe 'with permissions' do
-      it 'is not allowed for guest' do
-        guest = FactoryGirl.create(:guest)
-        comment = FactoryGirl.create(:comment, creator: guest)
-        api_put "/posts/#{comment.post_id}/comments/#{comment.id}",
-                { comment: { content: 'edited content' } }.to_json,
-                headers
-        expect(response.status).to eql(403) # forbidden
+    describe 'without authentication' do
+      it 'returns unauthorized code' do
+        api_put "/posts/#{basic_comment.post.id}", format: :json
+        expect(response.status).to eql(401) # unauthorized
         expect(response.content_type).to eql Mime::JSON
       end
+    end
+
+    describe 'with permissions' do
+      let!(:stranger) { FactoryGirl.create(:user) }
 
       describe 'user' do
-        let!(:stranger) { FactoryGirl.create(:user) }
-
         it 'can not change other people comments' do
           basic_comment.update_attribute(:creator, stranger)
           expect(@user).to_not eq stranger
@@ -130,7 +148,7 @@ describe 'Comments' do
           expect(response.content_type).to eql Mime::JSON
         end
 
-        it 'can not change creator field' do
+        it 'can not change creator attribute' do
           expect(basic_comment.creator).to eql(@user)
           api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
                   { comment: { user_id: stranger.id } }.to_json,
@@ -140,12 +158,13 @@ describe 'Comments' do
         end
       end
 
-      it 'admin can change it anyway' do
-        user1 = FactoryGirl.create(:user)
-        basic_comment.update_attribute(:creator, user1)
-        @user = FactoryGirl.create(:admin)
-        put_action
-        expect(response.status).to eql(204) # no_content
+      describe 'admin' do
+        it 'changes other people creator attribute' do
+          basic_comment.update_attribute(:creator, stranger)
+          @user = FactoryGirl.create(:admin)
+          put_action
+          expect(response.status).to eql(204) # no_content
+        end
       end
     end
   end
@@ -155,34 +174,45 @@ describe 'Comments' do
       api_delete "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
                  {}, headers
     end
-    it 'destroys my requested comment' do
+
+    it 'returns no content code' do
       destroy_action
       expect(response.status).to eql(204) # no content
     end
+
+    it "decrease post's comments count" do
+      basic_comment
+      expect { destroy_action }.to change { basic_comment.post.comments.count }.by(-1)
+    end
+
+    describe 'without authentication' do
+      it 'returns unauthorized code' do
+        api_delete "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
+                   format: :json
+        expect(response.status).to eql(401) # Unauthorized
+        expect(response.content_type).to eql Mime::JSON
+      end
+    end
+
     describe 'with permissions' do
-      it 'is not allowed for guest' do
-        guest = FactoryGirl.create(:guest)
-        comment = FactoryGirl.create(:comment, creator: guest)
-        api_delete "/posts/#{comment.post_id}/comments/#{comment.id}", {}, headers
-        expect(response.status).to eql(403) # forbidden
-        expect(response.content_type).to eql Mime::JSON
+      describe 'user' do
+        it 'is not allowed for other people comments' do
+          basic_comment
+          @user = FactoryGirl.create(:user) # new current user
+          expect(basic_comment.creator).to_not eql(@user)
+          destroy_action
+          expect(response.status).to eql(403) # forbidden
+          expect(response.content_type).to eql Mime::JSON
+        end
       end
 
-      it 'is not allowed for other people comments' do
-        basic_comment
-        @user = FactoryGirl.create(:user) # new current user
-        expect(basic_comment.creator).to_not eql(@user)
-        destroy_action
-        expect(response.status).to eql(403) # forbidden
-        expect(response.content_type).to eql Mime::JSON
-      end
-
-      it 'admin can destroy it anyway' do
-        basic_comment
-        @user = FactoryGirl.create(:admin)
-        expect(basic_comment.creator).to_not eql(@user)
-        destroy_action
-        expect(response.status).to eql(204) # no_content
+      describe 'admin' do
+        it 'deletes other people comments' do
+          basic_comment
+          @user = FactoryGirl.create(:admin)
+          expect(basic_comment.creator).to_not eql(@user)
+          expect { destroy_action }.to change { Comment.count }.by(-1)
+        end
       end
     end
   end
@@ -195,7 +225,7 @@ describe 'Comments' do
     end
 
     describe 'when valid' do
-      it 'has resonse status with no content' do
+      it 'returns no content code' do
         like
         expect(response.status).to eql(204) # no_content
       end
@@ -207,18 +237,19 @@ describe 'Comments' do
 
     describe 'when invalid' do
       before(:each) { allow_any_instance_of(Comment).to receive(:save).and_return(false) }
-      it 'has unsuccessful update' do
+
+      it 'returns unprocessable entity code' do
         like
         expect(response.status).to eql 422 # unprocessable_entity
         expect(response.content_type).to eql Mime::JSON
       end
     end
 
-    describe 'with permissions' do
-      it 'is not allowed for guest' do
-        @user = FactoryGirl.create(:guest)
-        like
-        expect(response.status).to eql 403 # forbidden
+    describe 'without authentication' do
+      it 'returns unauthorized code' do
+        api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}/like",
+                format: :json
+        expect(response.status).to eql 401 # unauthorized
         expect(response.content_type).to eql Mime::JSON
       end
     end

@@ -13,6 +13,7 @@ This is just example web API (JSON) made in Ruby on Rails framework. Very basic 
 1. User can have 3 roles: admin, user, guest (default and existing in database)
    * Admin has access to everything.
    * User can read all, create all, but update and deleted only his records.
+   * Guest is unauthorized user but not specific role in User's model.
    * Guest has only read access.
 1. There is special action called 'like' for both comment and post. It just increase like counter of these models. I think that action out of typical CRUID is very common in real live.
 

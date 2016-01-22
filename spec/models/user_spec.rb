@@ -10,7 +10,7 @@ describe User do
   it { respond_to :role }
   it { respond_to :ROLES }
 
-  let(:user) { FactoryGirl.create(:guest) }
+  let(:user) { FactoryGirl.create(:user) }
 
   it 'is valid' do
     expect(user).to be_valid
@@ -19,8 +19,8 @@ describe User do
   describe 'role' do
     it 'is guest by default' do
       user = User.create(username: 'bleble', password: '123')
-      expect(user.role).to eql 'guest'
-      expect(user).to be_guest
+      expect(user.role).to eql 'user'
+      expect(user).to be_user
     end
 
     it 'comes from array of defined ROLES' do

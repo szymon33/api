@@ -1,9 +1,9 @@
 module API
   class CommentsController < ApplicationController
+    skip_before_filter :authenticate, only: [:index, :show]
     before_filter :set_comment, except: [:index, :create]
     before_filter :set_post, only: [:create, :index, :show]
     before_filter :user_not_allowed, only: [:update, :destroy]
-    before_filter :guest_not_allowed, except: [:index, :show]
 
     def index
       comments = Comment.all
