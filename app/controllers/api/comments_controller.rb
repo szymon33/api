@@ -59,8 +59,10 @@ module API
     end
 
     def user_not_allowed
-      !(@current_user.user? && @comment.creator == @current_user) &&
-        !@current_user.admin? && render_forbidden
+      return if @current_user.admin?
+      return if @current_user.user? && @comment.creator == @current_user
+
+      render_forbidden
     end
   end
 end
