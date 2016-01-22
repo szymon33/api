@@ -41,7 +41,7 @@ module API
     end
 
     def like
-      if @comment.like
+      if @comment.like!
         head :no_content
       else
         render json: @comment.errors, status: 422 # unprocessable_entity

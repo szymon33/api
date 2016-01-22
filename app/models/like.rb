@@ -1,5 +1,5 @@
 module Like
-  def like
+  def like!
     self.like_counter += 1
     save
   end

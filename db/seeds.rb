@@ -6,8 +6,13 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-user = User.create(username: 'gates', password: '123', role: 'user')
-admin = User.create(username: 'jobs', password: '123', role: 'admin')
+user = User.new(username: 'gates', role: 'user')
+user.password = '123'
+user.save!
+
+admin = User.new(username: 'jobs', role: 'admin')
+admin.password = '123'
+admin.save!
 
 user_post = Post.new(
   title: 'Stop Using These 16 Terms to Describe Yourself',
@@ -23,7 +28,7 @@ admin_post = Post.new(
 admin_post.creator = admin
 admin.save!
 
-admin_comment = user.comments.build(
+admin_comment = admin.comments.build(
   content: "Content is this and that and don't forget to say it's great!"
 )
 admin_comment.post = user_post
@@ -34,3 +39,5 @@ user_comment = user.comments.build(
 )
 user_comment.post = admin_post
 user_comment.save!
+
+user_comment.like!
