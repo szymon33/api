@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   has_many :posts
 
   validate :username, prsence: true, uniqueness: true
-  validates_presence_of :password
+  validates_presence_of :password, only: :create
   validates_inclusion_of :role, in: ROLES
 
   ROLES.each do |r|
@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
 
   def self.authenticate(username, password)
     if user = User.find_by_username(username)
-      password == user.password
+      user.password == password
     end
   end
 
