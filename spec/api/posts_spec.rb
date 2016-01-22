@@ -141,21 +141,23 @@ describe 'Posts' do
         end
 
         it 'can not change creator attribute' do
-          expect(basic_post.creator).to eql(@user)
           expect do
+            expect(basic_post.creator).to eql(@user)
             api_put "/posts/#{basic_post.id}",
                     { post: { user_id: stranger.id } }.to_json,
                     headers
-          end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
+          end.to_not change { basic_post.reload.user_id }
         end
       end
 
       describe 'admin' do
         it 'changes other people creator attribute' do
-          basic_post.update_attribute(:creator, stranger)
           @user = FactoryGirl.create(:admin)
-          put_action
-          expect(response.status).to eql(204) # no_content
+          expect do
+            api_put "/posts/#{basic_post.id}",
+                    { post: { user_id: stranger.id } }.to_json,
+                    headers
+          end.to change { basic_post.reload.user_id }
         end
       end
     end

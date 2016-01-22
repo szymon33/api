@@ -12,7 +12,7 @@ module API
     end
 
     def create
-      post = Post.new(params[:post])
+      post = Post.new(post_params)
       post.creator = @current_user
       if post.save
         render json: post, status: :created, location: [:api, post] # created - 201
@@ -26,7 +26,7 @@ module API
     end
 
     def update
-      if @post.update_attributes(params[:post])
+      if @post.update_attributes(post_params)
         head :no_content
       else
         render json: @post.errors, status: 422 # unprocessable_entity
@@ -57,6 +57,14 @@ module API
       return if @current_user.user? && @post.creator == @current_user
 
       render_forbidden
+    end
+
+    def post_params
+      if @current_user && @current_user.admin?
+        params.require(:post).permit!
+      else
+        params.require(:post).permit(:title, :content)
+      end
     end
   end
 end

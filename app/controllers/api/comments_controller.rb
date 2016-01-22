@@ -13,7 +13,7 @@ module API
     end
 
     def create
-      @comment = Comment.new(params[:comment])
+      @comment = Comment.new(comment_params)
       @comment.post = @post
       @comment.creator = @current_user
       if @comment.save
@@ -28,7 +28,7 @@ module API
     end
 
     def update
-      if @comment.update_attributes(params[:comment])
+      if @comment.update_attributes(comment_params)
         head :no_content
       else
         render json: @comment.errors, status: 422 # unprocessable_entity
@@ -63,6 +63,14 @@ module API
       return if @current_user.user? && @comment.creator == @current_user
 
       render_forbidden
+    end
+
+    def comment_params
+      if @current_user && @current_user.admin?
+        params.require(:comment).permit!
+      else
+        params.require(:comment).permit(:content)
+      end
     end
   end
 end

@@ -154,16 +154,18 @@ describe 'Comments' do
             api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
                     { comment: { user_id: stranger.id } }.to_json,
                     headers
-          end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
+          end.to_not change { basic_comment.reload.user_id }
         end
       end
 
       describe 'admin' do
         it 'changes other people creator attribute' do
-          basic_comment.update_attribute(:creator, stranger)
           @user = FactoryGirl.create(:admin)
-          put_action
-          expect(response.status).to eql(204) # no_content
+          expect do
+            api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
+                    { comment: { user_id: stranger.id } }.to_json,
+                    headers
+          end.to change { basic_comment.reload.user_id }
         end
       end
     end
