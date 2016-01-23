@@ -5,31 +5,30 @@ class User < ActiveRecord::Base
 
   ROLES = %w(user admin).freeze
 
-  attr_accessible :username, :role
-
   has_many :comments
   has_many :posts
 
-  validate :username, prsence: true, uniqueness: true
-  validates_presence_of :password, only: :create
+  validate :username, presence: true, uniqueness: true
+  validates_presence_of :password, on: :create
   validates_inclusion_of :role, in: ROLES
 
   ROLES.each do |r|
     define_method("#{r}?") { role == r }
   end
 
-  def self.authenticate(username, password)
+  def self.authenticate(username, pass)
     if user = User.find_by_username(username)
-      user.password == password
+      user.password == pass
     end
   end
 
   def password
-    @password ||= Password.new(password_hash)
+    @password ||= BCrypt::Password.new(password_hash)
   end
 
   def password=(new_password)
-    @password = Password.create(new_password)
+    BCrypt::Engine.cost = 6 # enough for HTTP Basic Auth
+    @password = BCrypt::Password.create(new_password)
     self.password_hash = @password
   end
 end

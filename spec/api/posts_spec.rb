@@ -5,13 +5,13 @@ describe 'Posts' do
     {
       'ACCEPT' => Mime::JSON,
       'CONTENT_TYPE' => 'application/json',
-      'HTTP_AUTHORIZATION' => encode_credentials(@user.username, @user.password)
+      'HTTP_AUTHORIZATION' => encode_credentials(@user.username, 'test')
     }
   end
 
   let(:basic_post) { FactoryGirl.create(:post, creator: @user) }
 
-  before(:each) { @user = FactoryGirl.create(:user) }
+  before(:each) { @user = User.find_by_role('user') || FactoryGirl.create(:user) }
 
   describe 'GET index' do
     it 'is success' do

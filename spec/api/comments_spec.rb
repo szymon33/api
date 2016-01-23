@@ -5,13 +5,13 @@ describe 'Comments' do
     {
       'ACCEPT' => Mime::JSON,
       'CONTENT_TYPE' => 'application/json',
-      'HTTP_AUTHORIZATION' => encode_credentials(@user.username, @user.password)
+      'HTTP_AUTHORIZATION' => encode_credentials(@user.username, 'test')
     }
   end
 
   let(:basic_comment) { FactoryGirl.create(:comment, creator: @user) }
 
-  before(:each) { @user = FactoryGirl.create(:user) }
+  before(:each) { @user = User.find_by_role('user') || FactoryGirl.create(:user) }
 
   describe 'GET index' do
     it 'is success' do
