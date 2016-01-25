@@ -1,14 +1,12 @@
 module API
   class PostsController < ApplicationController
     skip_before_filter :authenticate, only: [:index, :show]
-    before_filter :set_post, except: [:index, :create]
+    before_filter :set_post, except: [:create, :index]
     before_filter :user_not_allowed, only: [:update, :destroy]
 
     def index
       posts = Post.all
-      respond_to do |format|
-        format.json { render json: posts, status: 200 }
-      end
+      render json: posts, status: 200
     end
 
     def create

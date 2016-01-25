@@ -29,7 +29,7 @@ Bad credentials
 
 **Insufficient privileges**
 ```
-curl -X DELETE -H "Accept: application/json" -u 'user:123' http://api.example.com:3000/posts/2
+curl -X DELETE -u 'user:123' http://api.example.com:3000/posts/2
 ```
 
 ```json
@@ -38,12 +38,12 @@ Insufficient privileges
 or
 
 ```
-curl -X DELETE -IH "Accept: application/json" -u 'user:123' http://api.example.com:3000/posts/2
+curl -X DELETE -Iu 'user:123' http://api.example.com:3000/posts/2
 ```
 
 ```json
 HTTP/1.1 403 Forbidden
-Content-Type: application/json; charset=utf-8
+**Content-Type: application/json; charset=utf-8**
 X-UA-Compatible: IE=Edge
 Cache-Control: no-cache
 Set-Cookie: _api_session=BAh7B0kiD3N...; path=/; HttpOnly
@@ -74,7 +74,7 @@ curl http://api.example.com:3000/posts/1/comments/1
 
 **User changes his post content**
 ```
-curl -X PUT -d 'post[content]=bla bla' -u 'user:123' -iH "Accept: application/json" http://api.example.com:3000/posts/1
+curl -X PUT -d 'post[content]=bla bla' -u 'user:123' -i http://api.example.com:3000/posts/1
 ```
 
 ```json

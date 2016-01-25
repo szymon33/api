@@ -2,14 +2,12 @@ module API
   class CommentsController < ApplicationController
     skip_before_filter :authenticate, only: [:index, :show]
     before_filter :set_comment, except: [:index, :create]
-    before_filter :set_post, only: [:create, :index, :show]
+    before_filter :set_post, only: [:create]
     before_filter :user_not_allowed, only: [:update, :destroy]
 
     def index
       comments = Comment.all
-      respond_to do |format|
-        format.json { render json: comments, status: 200, location: [:api, @post] }
-      end
+      render json: comments, status: 200
     end
 
     def create
@@ -24,7 +22,7 @@ module API
     end
 
     def show
-      render json: @comment, status: 200, location: [:api, @post]
+      render json: @comment, status: 200
     end
 
     def update
