@@ -1,7 +1,5 @@
 Api::Application.routes.draw do
   namespace :api, constraints: { subdomain: 'api' }, path: '/', defaults: { format: 'json' } do
-    get '/status', to: 'heartbeat#status'
-
     resources :posts, except: [:new, :edit] do
       member do
         put :like
