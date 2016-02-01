@@ -53,7 +53,7 @@ Connection: close
 Server: thin
 ```
 
-### Successful scenario
+## Successful scenario
 **Retrive all posts**
 ```
 curl http://api.example.com:3000/posts
@@ -86,4 +86,22 @@ X-Request-Id: 7ff9eeb2fe0cec987e4913f3c2eced3d
 X-Runtime: 0.012183
 Connection: close
 Server: thin
+```
+
+## Custom Error 404 handling
+```
+curl -i http://api.example.com:3000/posts/foobar
+```
+
+```json
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+X-UA-Compatible: IE=Edge
+Cache-Control: no-cache
+X-Request-Id: 7317c6f7e46b367f2b90b0f33ee79b79
+X-Runtime: 0.003208
+Connection: close
+Server: thin
+
+{"error":"Not Found"}
 ```

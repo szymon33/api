@@ -12,5 +12,7 @@ Api::Application.routes.draw do
     end
 
     root to: 'heartbeat#status'
+
+    match '*path', :to => 'application#render_not_found'
   end
 end

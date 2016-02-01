@@ -16,6 +16,7 @@ This is just example web API (JSON) made in Ruby on Rails framework. Very basic 
    * Guest is unauthorized user but not specific role in User's model.
    * Guest has only read access.
 1. There is special action called 'like' for both comment and post. It just increase like counter of these models. I think that action out of typical CRUID is very common in real live.
+1. Error 404 (Not Found) is custom handling.
 
 
 ## Requirements

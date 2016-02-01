@@ -1,8 +1,11 @@
 module API
   class ApplicationController < ActionController::Base
+    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+    rescue_from ActionController::RoutingError, with: :render_not_found
+
     protect_from_forgery with: :null_session, if: proc { |c| c.request.format == 'application/json' }
 
-    before_filter :authenticate
+    before_filter :authenticate, except: :render_not_found
 
     def render_unauthorized
       headers['WWW-Authenticate'] = 'Basic realm="Heartbeat"'
@@ -15,6 +18,10 @@ module API
 
     def render_forbidden
       render json: 'Insufficient privileges', status: 403
+    end
+
+    def render_not_found
+      render json: { error: 'Not Found' }.to_json, status: 404
     end
 
     protected
