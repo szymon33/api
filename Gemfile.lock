@@ -145,7 +145,6 @@ DEPENDENCIES
   rails (= 3.2.22)
   rspec-rails (~> 2.0)
   shoulda-matchers
-  simplecov
   strong_parameters
   thin
 
