@@ -1,7 +1,7 @@
 # My API (JSON) Example
 [![Code Climate](https://codeclimate.com/github/szymon33/api/badges/gpa.svg)](https://codeclimate.com/github/szymon33/api)
 [![Test Coverage](https://codeclimate.com/github/szymon33/api/badges/coverage.svg)](https://codeclimate.com/github/szymon33/api/coverage)
-[![CircleCI](https://circleci.com/gh/szymon33/api.svg?style=shield)
+![CircleCI](https://circleci.com/gh/szymon33/api.svg?style=shield)
 
 This is just example web API (JSON) made in Ruby on Rails framework. Very basic functionality.
 
@@ -16,7 +16,7 @@ This is just example web API (JSON) made in Ruby on Rails framework. Very basic 
    * User can read all, create all, but update and deleted only his records.
    * Guest is unauthorized user but not specific role in User's model.
    * Guest has only read access.
-1. There is special action called 'like' for both comment and post. It just increase like counter of these models. I think that action out of typical CRUID is very common in real live.
+1. There is special action called 'like' for both comment and post. It just increases like counter of whether Post or Comment. I think that such a action out of typical CRUID is very common in real life.
 1. Error 404 (Not Found) is custom handling.
 
 
