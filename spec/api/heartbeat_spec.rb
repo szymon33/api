@@ -13,8 +13,7 @@ describe 'Heartbeat', type: 'feature' do
     end
 
     it 'has OK body' do
-      message = json(response.body)
-      expect(message).to eq(message: 'OK')
+      expect(json[:message]).to eq 'OK'
     end
   end
 end

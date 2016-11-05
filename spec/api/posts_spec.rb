@@ -27,6 +27,14 @@ describe 'Posts' do
         expect(response.content_type).to eql Mime::JSON
       end
     end
+
+    it 'has right amount of records' do
+      Post.delete_all
+      FactoryGirl.create_list(:post, 10, creator: @user)
+      api_get '/posts', { format: :json }, headers
+      expect(Post.count).to eq 10
+      expect(json.length).to eq 10
+    end
   end
 
   describe 'POST create' do
@@ -54,6 +62,11 @@ describe 'Posts' do
         expect(response.status).to eql 201
         expect(Post.last.creator).to_not be nil
         expect(Post.last.creator).to eql @user
+      end
+
+      it 'returns post' do
+        create_action
+        expect(response.body).to eq Post.last.to_json
       end
     end
 

@@ -26,6 +26,15 @@ describe 'Comments' do
         expect(response.status).to eq(200) # success
         expect(response.content_type).to eql Mime::JSON
       end
+
+      it 'has right amount of records' do
+        Comment.delete_all
+        post = FactoryGirl.create(:post, creator: @user)
+        FactoryGirl.create_list(:comment, 10, creator: @user, post: post)
+        api_get "/posts/#{post.id}/comments", format: :json
+        expect(post.comments.count).to eq 10
+        expect(json.length).to eq 10
+      end
     end
   end
 
@@ -60,6 +69,11 @@ describe 'Comments' do
         expect(response.status).to eql 201
         expect(Comment.last.creator).to_not be nil
         expect(Comment.last.creator).to eql @user
+      end
+
+      it 'returns comment' do
+        create_action
+        expect(response.body).to eq Comment.last.to_json
       end
     end
 

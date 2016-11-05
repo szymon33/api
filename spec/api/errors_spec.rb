@@ -13,8 +13,7 @@ describe 'Errors handling', type: 'feature' do
     end
 
     it 'has error Not Found body' do
-      message = json(response.body)
-      expect(message).to eq(error: 'Not Found')
+      expect(json[:error]).to eq 'Not Found'
     end
   end
 
@@ -30,8 +29,7 @@ describe 'Errors handling', type: 'feature' do
     end
 
     it 'has error Not Found body' do
-      message = json(response.body)
-      expect(message).to eq(error: 'Not Found')
+      expect(json[:error]).to eq 'Not Found'
     end
   end
 end
