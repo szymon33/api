@@ -117,6 +117,7 @@ describe 'Posts' do
       it { is_expected.to include(:user_id) }
       it { is_expected.to include(:created_at) }
       it { is_expected.to include(:updated_at) }
+      it { is_expected.to include(comments: []) }
     end
 
   end

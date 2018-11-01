@@ -1,7 +1,6 @@
 module API::V1
   class CommentsController < ApplicationController
     skip_before_filter :authenticate, only: [:index, :show]
-    before_filter :set_comment, except: [:index, :create]
     before_filter :verify_authorized, except: [:index, :create]
 
     def index
@@ -12,38 +11,38 @@ module API::V1
 
     def create
       authorize Comment
-      @comment = Comment.new(comment_params)
-      @comment.post = post
-      @comment.creator = @current_user
-      if @comment.save
-        render json: @comment, status: 201, location: [:api, :v1, post] # created
+      comment = Comment.new(comment_params)
+      comment.post = post
+      comment.creator = @current_user
+      if comment.save
+        render json: comment, status: 201, location: [:api, :v1, post] # created
       else
-        render json: @comment.errors, status: 422 # unprocessable_entity
+        render json: comment.errors, status: 422 # unprocessable_entity
       end
     end
 
     def show
-      render json: @comment, status: 200
+      render json: comment, status: 200
     end
 
     def update
-      if @comment.update_attributes(comment_params)
+      if comment.update_attributes(comment_params)
         head :no_content
       else
-        render json: @comment.errors, status: 422 # unprocessable_entity
+        render json: comment.errors, status: 422 # unprocessable_entity
       end
     end
 
     def destroy
-      @comment.destroy
+      comment.destroy
       head 204
     end
 
     def like
-      if @comment.like!
+      if comment.like!
         head :no_content
       else
-        render json: @comment.errors, status: 422 # unprocessable_entity
+        render json: comment.errors, status: 422 # unprocessable_entity
       end
     end
 
@@ -53,20 +52,16 @@ module API::V1
       @post ||= Post.find(params[:post_id])
     end
 
-    def set_comment
-      @comment = Comment.find(params[:id])
+    def comment
+      @comment ||= Comment.find(params[:id])
     end
 
     def comment_params
-      if @current_user && @current_user.admin?
-        params.require(:comment).permit!
-      else
-        params.require(:comment).permit(:content)
-      end
+      params.require(:comment).permit! # ToDo
     end
 
     def verify_authorized
-      authorize @comment
+      authorize comment
     end
   end
 end
