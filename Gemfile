@@ -2,8 +2,10 @@ source 'https://rubygems.org'
 ruby '2.1.8'
 
 gem 'rails', '3.2.22'
-gem 'sqlite3'
+
+gem 'active_model_serializers'
 gem 'pundit'
+gem 'sqlite3'
 
 group :test do
   gem 'factory_girl_rails', '~> 4.2.1'
