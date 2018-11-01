@@ -33,7 +33,7 @@ describe 'Comments' do
         FactoryGirl.create_list(:comment, 10, creator: @user, post: post)
         api_get "/posts/#{post.id}/comments", format: :json
         expect(post.comments.count).to eq 10
-        expect(json.length).to eq 10
+        expect(json[:comments].length).to eq 10
       end
     end
   end
@@ -73,7 +73,7 @@ describe 'Comments' do
 
       it 'returns comment' do
         create_action
-        expect(response.body).to eq Comment.last.to_json
+        expect(json[:comment][:content]).to eq Comment.last.content
       end
     end
 
@@ -97,19 +97,34 @@ describe 'Comments' do
   end
 
   describe 'GET show' do
-    it 'is success' do
+    before do
       api_get "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
               headers
+    end
+
+    it 'is success' do
       expect(response.status).to eql 200 # success
       expect(response.content_type).to eql Mime::JSON
     end
 
     describe 'without authentication' do
       it 'is allowed' do
-        api_get "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
-                format: :json
         expect(response.status).to eql 200 # success
         expect(response.content_type).to eql Mime::JSON
+      end
+    end
+
+    context 'JSON response' do
+      subject { json[:comment] }
+
+      it { is_expected.to include({ id: a_kind_of(Integer) }) }
+      it { is_expected.to include({ content: 'Foo Bar' }) }
+      it { is_expected.to include({ like_counter: a_kind_of(Integer)}) }
+      it { is_expected.to include(:created_at) }
+      it { is_expected.to include(:updated_at) }
+
+      it 'is playground' do
+        expect(subject[:content].class).to eq String
       end
     end
   end
