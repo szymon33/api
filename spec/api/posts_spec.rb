@@ -33,7 +33,7 @@ describe 'Posts' do
       FactoryGirl.create_list(:post, 10, creator: @user)
       api_get '/posts', { format: :json }, headers
       expect(Post.count).to eq 10
-      expect(json.length).to eq 10
+      expect(json[:posts].length).to eq 10
     end
   end
 
@@ -66,7 +66,7 @@ describe 'Posts' do
 
       it 'returns post' do
         create_action
-        expect(response.body).to eq Post.last.to_json
+        expect(json[:post][:title]).to eq Post.last.title
       end
     end
 
@@ -90,8 +90,11 @@ describe 'Posts' do
   end
 
   describe 'GET show' do
-    it 'is success' do
+    before do
       api_get "/posts/#{basic_post.id}", headers
+    end
+
+    it 'is success' do
       expect(response.status).to eql 200 # success
       expect(response.content_type).to eql Mime::JSON
     end
@@ -103,6 +106,19 @@ describe 'Posts' do
         expect(response.content_type).to eql Mime::JSON
       end
     end
+
+    context 'JSON response' do
+      subject { json[:post] }
+
+      it { is_expected.to include(:id) }
+      it { is_expected.to include(:title) }
+      it { is_expected.to include(:content) }
+      it { is_expected.to include(:like_counter) }
+      it { is_expected.to include(:user_id) }
+      it { is_expected.to include(:created_at) }
+      it { is_expected.to include(:updated_at) }
+    end
+
   end
 
   describe 'PUT update' do
