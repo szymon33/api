@@ -2,7 +2,8 @@ source 'https://rubygems.org'
 ruby '2.1.8'
 
 gem 'rails', '3.2.22'
-gem "sqlite3"
+gem 'sqlite3'
+gem 'pundit'
 
 group :test do
   gem 'factory_girl_rails', '~> 4.2.1'

@@ -1,7 +1,10 @@
 module API::V1
   class ApplicationController < ActionController::Base
+    include Pundit
+
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     rescue_from ActionController::RoutingError, with: :render_not_found
+    rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
 
     protect_from_forgery with: :null_session, if: proc { |c| c.request.format == 'application/json' }
 
@@ -34,6 +37,10 @@ module API::V1
       authenticate_with_http_basic do |username, password|
         @current_user = User.find_by_username!(username) if User.authenticate(username, password)
       end
+    end
+
+    def pundit_user
+      @current_user
     end
   end
 end
