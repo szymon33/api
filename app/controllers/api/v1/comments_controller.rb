@@ -1,4 +1,4 @@
-module API
+module API::V1
   class CommentsController < ApplicationController
     skip_before_filter :authenticate, only: [:index, :show]
     before_filter :set_comment, except: [:index, :create]
@@ -15,7 +15,7 @@ module API
       @comment.post = @post
       @comment.creator = @current_user
       if @comment.save
-        render json: @comment, status: 201, location: [:api, @post] # created
+        render json: @comment, status: 201, location: [:api, :v1, @post] # created
       else
         render json: @comment.errors, status: 422 # unprocessable_entity
       end

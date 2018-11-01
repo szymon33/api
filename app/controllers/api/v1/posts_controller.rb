@@ -1,4 +1,4 @@
-module API
+module API::V1
   class PostsController < ApplicationController
     skip_before_filter :authenticate, only: [:index, :show]
     before_filter :set_post, except: [:create, :index]
@@ -13,7 +13,7 @@ module API
       post = Post.new(post_params)
       post.creator = @current_user
       if post.save
-        render json: post, status: :created, location: [:api, post] # created - 201
+        render json: post, status: :created, location: [:api, :v1, post] # created - 201
       else
         render json: post.errors, status: 422 # unprocessable_entity
       end

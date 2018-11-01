@@ -52,7 +52,7 @@ describe 'Comments' do
         create_action
         expect(response.status).to eql 201
         expect(response.content_type).to eql Mime::JSON
-        expect(response.location).to eql "http://api.example.com/posts/#{@post.id}"
+        expect(response.location).to eql "http://api.example.com/v1/posts/#{@post.id}"
       end
 
       it "increases count of post's comments" do

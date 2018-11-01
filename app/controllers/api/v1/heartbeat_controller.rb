@@ -1,4 +1,4 @@
-module API
+module API::V1
   class HeartbeatController < ApplicationController
     skip_before_filter :authenticate, only: :status
 

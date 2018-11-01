@@ -7,17 +7,17 @@ def encode_credentials(username, password)
 end
 
 def api_get(path, *args)
-  get "http://api.example.com#{path}", *args
+  get "http://api.example.com/v1#{path}", *args
 end
 
 def api_post(path, *args)
-  post "http://api.example.com#{path}", *args
+  post "http://api.example.com/v1#{path}", *args
 end
 
 def api_put(path, *args)
-  put "http://api.example.com#{path}", *args
+  put "http://api.example.com/v1#{path}", *args
 end
 
 def api_delete(path, *args)
-  delete "http://api.example.com#{path}", *args
+  delete "http://api.example.com/v1#{path}", *args
 end

@@ -49,7 +49,7 @@ describe 'Posts' do
         create_action
         expect(response.status).to eql 201 # created
         expect(response.content_type).to eql Mime::JSON
-        expect(response.location).to eql "http://api.example.com/posts/#{Post.last.id}"
+        expect(response.location).to eql "http://api.example.com/v1/posts/#{Post.last.id}"
       end
 
       it 'creates new post' do
