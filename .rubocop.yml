@@ -1,0 +1,15 @@
+AllCops:
+  Exclude:
+    - 'db/schema.rb'
+  Include:
+    - Rakefile
+    - config.ru
+Documentation:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  MaxLineLength: 120
+
+Style/WhileUntilModifier:
+  MaxLineLength: 120
+
