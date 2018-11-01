@@ -2,20 +2,21 @@ module API::V1
   class CommentsController < ApplicationController
     skip_before_filter :authenticate, only: [:index, :show]
     before_filter :set_comment, except: [:index, :create]
-    before_filter :set_post, only: [:create]
-    before_filter :user_not_allowed, only: [:update, :destroy]
+    before_filter :verify_authorized, except: [:index, :create]
 
     def index
+      authorize Comment
       comments = Comment.all
       render json: comments, status: 200
     end
 
     def create
+      authorize Comment
       @comment = Comment.new(comment_params)
-      @comment.post = @post
+      @comment.post = post
       @comment.creator = @current_user
       if @comment.save
-        render json: @comment, status: 201, location: [:api, :v1, @post] # created
+        render json: @comment, status: 201, location: [:api, :v1, post] # created
       else
         render json: @comment.errors, status: 422 # unprocessable_entity
       end
@@ -48,19 +49,12 @@ module API::V1
 
     private
 
-    def set_post
-      @post = Post.find(params[:post_id])
+    def post
+      @post ||= Post.find(params[:post_id])
     end
 
     def set_comment
       @comment = Comment.find(params[:id])
-    end
-
-    def user_not_allowed
-      return if @current_user.admin?
-      return if @current_user.user? && @comment.creator == @current_user
-
-      render_forbidden
     end
 
     def comment_params
@@ -69,6 +63,10 @@ module API::V1
       else
         params.require(:comment).permit(:content)
       end
+    end
+
+    def verify_authorized
+      authorize @comment
     end
   end
 end
