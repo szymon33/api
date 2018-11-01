@@ -188,13 +188,15 @@ describe 'Comments' do
       end
 
       describe 'admin' do
-        it 'changes other people creator attribute' do
+        it 'changes other person comment content' do
           @user = FactoryGirl.create(:admin)
           expect do
             api_put "/posts/#{basic_comment.post_id}/comments/#{basic_comment.id}",
-                    { comment: { user_id: stranger.id } }.to_json,
+                    { comment: { content: 'La La Land' } }.to_json,
                     headers
-          end.to change { basic_comment.reload.user_id }
+          end.to change { basic_comment.reload.content }
+          .from(basic_comment.content)
+          .to('La La Land')
         end
       end
     end

@@ -52,11 +52,7 @@ module API::V1
     end
 
     def post_params
-      if @current_user && @current_user.admin?
-        params.require(:post).permit!
-      else
-        params.require(:post).permit(:title, :content)
-      end
+      params.require(:post).permit(:title, :content)
     end
 
     def verify_authorized

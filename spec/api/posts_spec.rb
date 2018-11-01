@@ -119,7 +119,6 @@ describe 'Posts' do
       it { is_expected.to include(:updated_at) }
       it { is_expected.to include(comments: []) }
     end
-
   end
 
   describe 'PUT update' do
@@ -162,7 +161,7 @@ describe 'Posts' do
       let!(:stranger) { FactoryGirl.create(:user) }
 
       describe 'user' do
-        it 'can not change other people posts' do
+        it 'can not change another person post' do
           basic_post.update_attribute(:creator, stranger)
           expect(@user).to_not eq stranger
           put_action
@@ -181,13 +180,15 @@ describe 'Posts' do
       end
 
       describe 'admin' do
-        it 'changes other people creator attribute' do
+        it 'changes other user post' do
           @user = FactoryGirl.create(:admin)
           expect do
             api_put "/posts/#{basic_post.id}",
-                    { post: { user_id: stranger.id } }.to_json,
+                    { post: { content: 'La La Land' } }.to_json,
                     headers
-          end.to change { basic_post.reload.user_id }
+          end.to change { basic_post.reload.content }
+            .from(basic_post.content)
+            .to('La La Land')
         end
       end
     end

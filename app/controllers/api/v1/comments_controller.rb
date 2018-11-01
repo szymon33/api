@@ -57,7 +57,7 @@ module API::V1
     end
 
     def comment_params
-      params.require(:comment).permit! # ToDo
+      params.require(:comment).permit(:title, :content)
     end
 
     def verify_authorized
